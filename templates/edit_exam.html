@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Edit Exam: {{ exam.name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/exam-mode.css" />
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/spinner.css" />
+</head>
+<body>
+  <div class="overlay">
+    <div class="nips-container" style="display: block;">
+      <div class="nips"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2><i class="fas fa-edit"></i> Edit Exam: {{ exam.name }}</h2>
+      </div>
+      <div class="card-body">
+        <form method="post" action="/teacher/edit_exam/{{ exam.id }}">
+          <div class="form-group">
+            <label class="form-label">Start Time</label>
+            <div class="icon-input">
+              <i class="far fa-calendar-alt"></i>
+              <input type="datetime-local" class="form-control" name="start_time" value="{{ exam.start_time }}" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">End Time</label>
+            <div class="icon-input">
+              <i class="far fa-calendar-check"></i>
+              <input type="datetime-local" class="form-control" name="end_time" value="{{ exam.end_time }}" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Duration (minutes)</label>
+            <div class="icon-input">
+              <i class="far fa-clock"></i>
+              <input type="number" class="form-control" name="duration" value="{{ exam.duration }}" required>
+            </div>
+          </div>
+          
+          <div class="btn-container">
+            <button type="submit" class="btn update-button">
+              <i class="fas fa-save"></i> Update Exam
+            </button>
+            <button type="button" class="btn back-button">
+              <i class="fas fa-arrow-left"></i> Back to Exams
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLoading() {
+      const overlay = document.querySelector(".overlay");
+      overlay.style.opacity = "1";
+      overlay.style.visibility = "visible";
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      const updateButton = document.querySelector('.update-button');
+      const backButton = document.querySelector('.back-button');
+
+      // Submit event: check validity and trigger animation only if valid.
+      form.addEventListener('submit', function(e) {
+        const startTime = new Date(form.elements['start_time'].value);
+        const endTime = new Date(form.elements['end_time'].value);
+        const duration = parseInt(form.elements['duration'].value);
+
+        if (endTime <= startTime) {
+          e.preventDefault();
+          alert('End time must be after start time');
+          return false;
+        }
+
+        if (duration <= 0) {
+          e.preventDefault();
+          alert('Duration must be positive');
+          return false;
+        }
+
+        // Only show loading animation if the form passes validation.
+        if (form.checkValidity()) {
+          showLoading();
+        }
+      });
+
+      // Back button click: trigger animation and then go back.
+      backButton.addEventListener('click', function() {
+        showLoading();
+        history.back();
+        
+      });
+    });
+  </script>
+</body>
+</html>

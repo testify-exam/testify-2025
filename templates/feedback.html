@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Feedback</title>
+    <style>
+        /* Variables */
+        :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+          --text-color: #202124;
+          --background-color: #f8f9fa;
+          --card-background: #fff;
+          --border-color: #dadce0;
+          --success-color: #34a853;
+          --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+          --border-radius: 4px;
+          --spacing: 12px;
+          --star-color-empty: #e0e0e0;
+          --star-color-filled: #ffc107;
+        }
+
+        /* Global Styles */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        svg {
+    display: flex;
+    align-items: center;
+}
+
+        body {
+          font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+          background-color: var(--background-color);
+          color: var(--text-color);
+          line-height: 1.4;
+          padding: 10px;
+          max-width: 480px;
+          margin: 0 auto;
+          font-size: 14px;
+        }
+        button, a {
+          -webkit-tap-highlight-color: transparent;  
+          outline: none; }
+
+        h2 {
+        color: #4361ee;
+        margin: 12px 0 8px 0;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+        /* Card Layout */
+        .card {
+          background-color: var(--card-background);
+          border-radius: var(--border-radius);
+          box-shadow: var(--shadow);
+          padding: var(--spacing);
+          margin-bottom: 10px;
+        }
+
+        /* Form Elements */
+        textarea, button {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius);
+          font-family: inherit;
+          font-size: 14px;
+          border-radius: 12px;
+        }
+
+        textarea:focus {
+          outline: none;
+          border-color: var(--primary-color);
+        }
+
+        textarea {
+          min-height: 80px;
+          resize: vertical;
+          margin: 8px 0;
+        }
+
+        button {
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          cursor: pointer;
+          font-weight: 500;
+          transition: background-color 0.2s ease;
+          padding: 8px 16px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-size: 13px;
+        }
+
+        button:hover {
+          background-color: var(--secondary-color);
+        }
+
+        /* Feedback List */
+        .feedback-item {
+          padding: 10px 0;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .feedback-item:last-child {
+          border-bottom: none;
+        }
+
+        .feedback-meta {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
+          font-size: 12px;
+          color: #70757a;
+        }
+
+        /* Star Rating */
+        .rating-container {
+          margin-bottom: 8px;
+        }
+
+        .stars {
+          display: inline-flex;
+          flex-direction: row-reverse;
+          justify-content: flex-end;
+        }
+
+        .stars input {
+          display: none;
+        }
+
+        .stars label {
+          font-size: 24px;
+          color: var(--star-color-empty);
+          cursor: pointer;
+          padding: 0 2px;
+          transition: color 0.2s;
+        }
+
+        .stars label:hover,
+        .stars label:hover ~ label,
+        .stars input:checked ~ label {
+          color: var(--star-color-filled);
+        }
+
+        /* Display stars in feedback list */
+        .star-display {
+          color: var(--star-color-filled);
+          letter-spacing: 1px;
+          font-size: 14px;
+        }
+
+        /* Admin reply styling */
+        .admin-reply {
+          background-color: #f1f3f4;
+          padding: 8px;
+          margin-top: 6px;
+          border-radius: 10px;
+          font-size: 13px;
+        }
+
+        .admin-label {
+          color: var(--primary-color);
+          font-weight: 500;
+          margin-bottom: 2px;
+        }
+
+        /* Success message */
+        .success-message {
+          background-color: var(--success-color);
+          color: white;
+          padding: 8px;
+          border-radius: var(--border-radius);
+          margin-bottom: 10px;
+          display: none;
+          font-size: 13px;
+          text-align: center;
+        }
+    </style>
+    <script>
+        const userId = {{ user_id }};
+        function getSelectedRating() {
+            const ratingInputs = document.querySelectorAll('input[name="rating"]');
+            for (const input of ratingInputs) {
+                if (input.checked) {
+                    return input.value;
+                }
+            }
+            return 0;
+        }
+
+        function displayStars(rating) {
+            return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        }
+        
+        function formatDate(date) {
+            const now = new Date();
+            const dateObj = new Date(date || now);
+            
+            return dateObj.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        async function submitFeedback() {
+            const rating = getSelectedRating();
+            const message = document.getElementById('message').value;
+            
+            if (rating === 0) {
+                alert("Please select a rating");
+                return;
+            }
+            
+            if (message.trim() === '') {
+                alert("Please enter your feedback message");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/feedback/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, rating, message })
+                });
+
+                const result = await response.json();
+                
+                // Show success message
+                const successMessage = document.getElementById('successMessage');
+                successMessage.textContent = result.message || "Feedback submitted successfully!";
+                successMessage.style.display = 'block';
+                
+                // Reset form
+                document.getElementById('feedbackForm').reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+                // Reload feedback list
+                loadFeedback();
+            } catch (error) {
+                alert("Error submitting feedback: " + error.message);
+            }
+        }
+
+        async function loadFeedback() {
+            try {
+                const response = await fetch(`/api/feedback/user/${userId}`);
+                const data = await response.json();
+                const feedbackList = document.getElementById('feedbackList');
+
+                if (data.feedback.length === 0) {
+                    feedbackList.innerHTML = '<p class="no-feedback">No feedback submitted yet.</p>';
+                    return;
+                }
+
+                feedbackList.innerHTML = data.feedback.map(f => `
+                    <div class="feedback-item">
+                        <div class="feedback-meta">
+                            <span class="star-display">${displayStars(f.rating)}</span>
+                            <span>${formatDate(f.created_at)}</span>
+                        </div>
+                        <div class="feedback-content">${f.message}</div>
+                        ${f.feedback_replies && f.feedback_replies.length > 0 ? `
+                            <div class="admin-reply">
+                                <div class="admin-label">Testify Team:</div>
+                                <div>${f.feedback_replies[0].reply_message}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('feedbackList').innerHTML = '<p>Error loading feedback: ' + error.message + '</p>';
+            }
+        }
+
+        window.onload = loadFeedback;
+    </script>
+</head>
+<body>
+    <div id="successMessage" class="success-message"></div>
+    
+    <div class="card">
+        <div style="    display: flex;justify-content: space-between;    align-items: flex-start;"><h2>Rate & Review</h2><a href="javascript:history.back()" style="text-decoration: none;
+            color: white;background-color: #4361ee;padding: 6px 10px ;border-radius: 16px;display: flex;align-items: center;gap: 4px;" ><svg width="18px" height="18px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="#FFF" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/><path fill="#FFF" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/></svg>Back</a></div>
+        <form id="feedbackForm">
+            <div class="rating-container">
+                <div class="stars">
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="1 star">★</label>
+                </div>
+            </div>
+            
+            <textarea id="message" placeholder="Share your experience..."></textarea>
+            <button type="button" onclick="submitFeedback()">Post Review</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Your Reviews</h2>
+        <div id="feedbackList"></div>
+    </div>
+</body>
+</html>

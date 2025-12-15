@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --background-color: #f8f9fa;
+      --text-color: #212529;
+      --card-bg: #ffffff;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --danger-color: #f44336;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+    
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1rem;
+      transition: all 0.3s ease;
+      z-index: 100;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar-header {
+      padding: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .sidebar-menu {
+      margin-top: 2rem;
+      list-style: none;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .sidebar-menu i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 1.5rem;
+      margin-left: 250px;
+      transition: margin-left 0.3s ease;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .user-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-menu img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 0.5rem;
+    }
+    
+    /* Dashboard Content */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: rgba(67, 97, 238, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+    }
+    
+    .card-icon i {
+      font-size: 1.5rem;
+    }
+    
+    .card-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-label {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+    
+    /* Table Styles */
+    .table-container {
+      background-color: var(--card-bg);
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .table-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .table-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+    
+    .table-content {
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+    
+    tr {
+      border-bottom: 1px solid #eee;
+    }
+    
+    tr:last-child {
+      border-bottom: none;
+    }
+    
+    /* Status Badges */
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    .badge-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-approved {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+    
+    .badge-rejected {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* Page Loader Animation */
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .loader-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+    
+    .loader-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 4px solid transparent;
+      border-radius: 50%;
+      animation: spinLoader 1.5s linear infinite;
+    }
+    
+    .loader-ring:nth-child(1) {
+      border-top-color: var(--primary-color);
+      animation-delay: 0s;
+    }
+    
+    .loader-ring:nth-child(2) {
+      border-right-color: var(--secondary-color);
+      animation-delay: 0.5s;
+    }
+    
+    .loader-ring:nth-child(3) {
+      border-bottom-color: var(--primary-color);
+      animation-delay: 1s;
+    }
+    
+    @keyframes spinLoader {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    position: relative;
+  }
+
+  .spinner::before,
+  .spinner::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--primary-color, #333); /* Default color */
+    opacity: 0.6;
+    animation: pulseLoader 2s infinite ease-in-out;
+  }
+
+  .spinner::after {
+    animation-delay: -1s;
+  }
+
+  @keyframes pulseLoader {
+    0%, 100% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1);
+    }
+  }
+    
+    /* Responsive Media Queries */
+    @media screen and (max-width: 991px) {
+      .sidebar {
+        width: 80px;
+      }
+      
+      .logo {
+        display: none;
+      }
+      
+      .sidebar-menu a span {
+        display: none;
+      }
+      
+      .sidebar-menu i {
+        margin-right: 0;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+    
+    @media screen and (max-width: 767px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 0.5rem;
+      }
+      
+      .sidebar-header {
+        padding: 0.5rem;
+      }
+      
+      .logo {
+        display: block;
+      }
+      
+      .menu-toggle {
+        display: block;
+      }
+      
+      .sidebar-menu {
+        display: none;
+        margin-top: 1rem;
+      }
+      
+      .sidebar-menu.active {
+        display: block;
+      }
+      
+      .sidebar-menu a span {
+        display: inline;
+      }
+      
+      .sidebar-menu i {
+        margin-right: 0.75rem;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .user-menu {
+        margin-top: 1rem;
+      }
+      
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column-reverse;
+        flex-wrap: wrap;
+    }
+      .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+}.card {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 11px;
+}
+    }
+    
+    @media screen and (max-width: 480px) {
+      .table-container {
+        margin-bottom: 1rem;
+      }
+      
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .table-title {
+        margin-bottom: 0.5rem;
+      }
+      
+      th, td {
+        padding: 0.75rem 1rem;
+      }
+    }
+
+  </style>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">Admin Panel</div>
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <ul class="sidebar-menu" id="sidebarMenu">
+        <li>
+          <a href="#" class="active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/approvals" class="nav-link" data-link>
+            <i class="fas fa-check-circle"></i>
+            <span>Pending Approvals</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/exams" class="nav-link" data-link>
+            <i class="fas fa-file-alt"></i>
+            <span>Manage Exams</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/users" class="nav-link" data-link>
+            <i class="fas fa-users"></i>
+            <span>Manage Users</span>
+          </a>
+        </li>
+        <li>
+          <a href="/feedback/admin/" class="nav-link" data-link>
+            <i class="fas fa-commenting"></i>
+            <span>Feedbacks</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="/notifications/new" class="nav-link" data-link>
+            <i class="fas fa-bell"></i>
+            <span>Add Notifications</span>
+          </a>
+        </li>
+        
+        <li>
+          <a href="/logout" class="nav-link" data-link>
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      
+      
+      <!-- Dashboard Cards -->
+      <div class="dashboard-cards">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+          <div class="card-value">{{ total_users }}</div>
+          <div class="card-label">Total Users</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+          </div>
+          <div class="card-value">{{ total_exams }}</div>
+          <div class="card-label">Available Exams</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+          <div class="card-value"> {{ pending_approvals }}</div>
+          <div class="card-label">Pending Approvals</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+          </div>
+          <div class="card-value">{{ completion_rate }}</div>
+          <div class="card-label">Completion Rate</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Global variables to hold overlay & spinner elements
+    let loadingOverlay = null;
+    let loadingSpinner = null;
+  
+    // Function to create the overlay element
+    function createOverlay() {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+      overlay.style.zIndex = '999';
+      return overlay;
+    }
+  
+    // Function to create the spinner element
+    function createSpinner() {
+      const spinner = document.createElement('div');
+      spinner.className = 'spinner';
+      spinner.style.position = 'fixed';
+      spinner.style.top = '50%';
+      spinner.style.left = '50%';
+      spinner.style.transform = 'translate(-50%, -50%)';
+      spinner.style.zIndex = '1000';
+      return spinner;
+    }
+  
+    // Function to show the loading animation
+    function showLoading() {
+      // Avoid duplicate overlays/spinners if already present
+      if (!loadingOverlay && !loadingSpinner) {
+        loadingOverlay = createOverlay();
+        loadingSpinner = createSpinner();
+        document.body.appendChild(loadingOverlay);
+        document.body.appendChild(loadingSpinner);
+      }
+    }
+  
+    // Function to hide the loading animation
+    function hideLoading() {
+      if (loadingOverlay && loadingSpinner) {
+        loadingOverlay.remove();
+        loadingSpinner.remove();
+        loadingOverlay = null;
+        loadingSpinner = null;
+      }
+    }
+  
+    // Example usage on page load: show spinner and hide it once fully loaded
+    showLoading();
+    window.addEventListener('load', function() {
+      hideLoading();
+    });
+  
+    // Mobile menu toggle remains the same
+    document.getElementById('menuToggle').addEventListener('click', function() {
+      document.getElementById('sidebarMenu').classList.toggle('active');
+    });
+  
+    // Show spinner on navigation click
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Show loading animation
+        showLoading();
+        // Navigate to the new location
+        window.location.href = link.getAttribute('href');
+      });
+    });
+    window.addEventListener('pageshow', function(event) {
+    console.log('Pageshow event fired!');
+    hideLoading();
+  });
+  </script>
+  
+</body>
+</html>

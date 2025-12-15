@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Students Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4caf50;
+      --danger-color: #f44336;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .filter-container {
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+  }
+  .filter-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  .custom-dropdown {
+    position: relative;
+    width: 100%;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .custom-dropdown .selected {
+    padding: 10px 12px;
+    line-height: 1.5;
+    background-color: #d2deff;
+    border-radius: 13px;
+}
+.custom-dropdown .dropdown-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    background: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+    border-radius: 19px;
+}
+  .custom-dropdown .dropdown-options li {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+  .custom-dropdown .dropdown-options li:hover {
+    background-color: #f1f1f1;
+  }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      font-size: 16px;
+    }
+    select option {
+    color: #0066cc;
+    background-color: #f9f9f9;
+    }
+
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    }
+
+    .student-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .student-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .student-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .student-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .student-card a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .student-card a:hover {
+      color: var(--secondary-color);
+    }
+
+    .student-info {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .student-info span {
+      display: inline-block;
+      margin-right: 10px;
+      background-color: #f1f1f1;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Overlay Styles */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal {
+      background-color: white;
+      width: 90%;
+      max-width: 700px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .overlay.active .modal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal-content {
+      padding: 25px;
+    }
+
+    .close-btn {
+      background: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s;
+      z-index: 10;
+    }
+
+    .close-btn:hover {
+      background-color: #d32f2f;
+    }
+
+    .close-btn i {
+      margin-right: 5px;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 30px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Animation for modal */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Student details styles */
+    .student-details {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .student-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .student-avatar {
+      font-size: 60px;
+      color: #4361ee;
+      margin-right: 20px;
+    }
+
+    .student-title h2 {
+      color: #212529;
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      border: none;
+      padding: 0;
+    }
+
+    .student-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .badge i {
+      margin-right: 5px;
+    }
+
+    .info-card {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .info-title {
+      background-color: #4361ee;
+      color: white;
+      padding: 12px 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-title i {
+      margin-right: 8px;
+    }
+
+    .info-content {
+      padding: 15px;
+    }
+
+    .info-content h3 {
+      margin: 0 0 15px 0;
+      font-size: 18px;
+      color: #3f37c9;
+    }
+
+    .info-content p {
+      margin-bottom: 10px;
+    }
+
+    .scores-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .score-item {
+      margin-bottom: 5px;
+    }
+
+    .score-name {
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .score-bar-container {
+      height: 25px;
+      background-color: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .score-bar {
+      height: 100%;
+      background-color: #4895ef;
+      border-radius: 4px;
+      position: relative;
+      min-width: 30px;
+      transition: width 0.5s ease;
+    }
+
+    .score-value {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .no-data {
+      color: #6c757d;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+      .student-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .student-avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+
+      .student-badges {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2><i class="fas fa-user-graduate"></i> Students Dashboard</h2>
+  </header>
+
+  <div class="filter-container">
+    <label for="customDropdown"><i class="fas fa-filter"></i> Filter by Department:</label>
+    <!-- Custom Dropdown Structure -->
+    <div class="custom-dropdown" id="customDropdown">
+      <div class="selected">Select Department</div>
+      <ul class="dropdown-options">
+        {% for dept in departments %}
+          <li data-value="{{ dept.id }}">{{ dept.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="student-cards" id="studentList">
+    {% for student in students %}
+      <div class="student-card" data-department="{{ student.department_id }}">
+        <a href="/teacher/student/{{ student.id }}" class="student-link" data-student-id="{{ student.id }}">
+          <i class="fas fa-user"></i> {{ student.username }}
+        </a>
+        <div class="student-info">
+          {% if student.department_name %}
+            <span><i class="fas fa-building"></i> {{ student.department_name }}</span>
+          {% endif %}
+          {% if student.roll_number %}
+            <span><i class="fas fa-id-card"></i> {{ student.roll_number }}</span>
+          {% endif %}
+          {% if student.register_number %}
+            <span><i class="fas fa-registered"></i> {{ student.register_number }}</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Overlay for student details -->
+  <div class="overlay" id="studentOverlay">
+    <div class="modal">
+      <button class="close-btn" id="closeOverlay">
+        <i class="fas fa-times"></i> Close
+      </button>
+      <div class="modal-content" id="modalContent">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // References to DOM elements used in other parts of the page
+    const deptFilter = document.getElementById('departmentFilter');
+    const studentList = document.getElementById('studentList');
+    const studentOverlay = document.getElementById('studentOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const closeOverlay = document.getElementById('closeOverlay');
+  
+    function filterStudents(selectedDept) {
+      const students = studentList.getElementsByClassName('student-card');
+      for (let i = 0; i < students.length; i++) {
+        const studentDept = students[i].getAttribute('data-department');
+        students[i].style.display = studentDept === selectedDept ? '' : 'none';
+      }
+    }
+  
+    // Overlay close functionality remains unchanged
+    closeOverlay.addEventListener('click', function() {
+      studentOverlay.classList.remove('active');
+      setTimeout(() => {
+        modalContent.innerHTML = '<div class="spinner"></div>';
+      }, 300);
+    });
+  
+    studentOverlay.addEventListener('click', function(e) {
+      if (e.target === studentOverlay) {
+        studentOverlay.classList.remove('active');
+        setTimeout(() => {
+          modalContent.innerHTML = '<div class="spinner"></div>';
+        }, 300);
+      }
+    });
+  
+    const studentLinks = document.getElementsByClassName('student-link');
+    for (let link of studentLinks) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        studentOverlay.classList.add('active');
+        modalContent.innerHTML = '<div class="spinner"></div>';
+        
+        fetch(this.href)
+          .then(response => response.text())
+          .then(html => {
+            modalContent.innerHTML = html;
+          })
+          .catch(error => {
+            modalContent.innerHTML = `
+              <div style="text-align: center; padding: 30px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f44336; margin-bottom: 20px;"></i>
+                <p>Error loading student details. Please try again later.</p>
+              </div>
+            `;
+            console.error('Error fetching student details:', error);
+          });
+      });
+    }
+  
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && studentOverlay.classList.contains('active')) {
+        studentOverlay.classList.remove('active');
+      }
+    });
+  
+    // Custom dropdown handling (only option-related changes)
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdown = document.getElementById('customDropdown');
+      const selected = dropdown.querySelector('.selected');
+      const optionsContainer = dropdown.querySelector('.dropdown-options');
+      // Query all <li> items in the dropdown options
+      const optionItems = dropdown.querySelectorAll('.dropdown-options li');
+  
+      // Automatically select the first option and filter students
+      if (optionItems.length > 0) {
+        const firstOption = optionItems[0];
+        const firstValue = firstOption.getAttribute('data-value');
+        const firstText = firstOption.textContent;
+  
+        selected.textContent = firstText;
+        selected.setAttribute('data-value', firstValue);
+  
+        filterStudents(firstValue);
+      }
+  
+      // Toggle dropdown when clicking the selected area
+      selected.addEventListener('click', function(e) {
+        optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+        e.stopPropagation();
+      });
+  
+      // Close dropdown if clicked outside
+      document.addEventListener('click', function() {
+        optionsContainer.style.display = 'none';
+      });
+  
+      // Handle option selection
+      optionsContainer.addEventListener('click', function(e) {
+        if (e.target && e.target.nodeName === "LI") {
+          selected.textContent = e.target.textContent;
+          const selectedValue = e.target.getAttribute('data-value');
+          selected.setAttribute('data-value', selectedValue);
+          optionsContainer.style.display = 'none';
+  
+          // Trigger filtering based on the selected department
+          filterStudents(selectedValue);
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Create Exam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --danger-color: #ef476f;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            max-width: 600px;
+            margin: 0 auto;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .back-link i {
+            margin-right: 5px;
+        }
+
+        /* Responsive adjustments from the provided CSS */
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 24px;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            input[type="text"],
+            input[type="datetime-local"],
+            input[type="number"],
+            select {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 30px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Animation for form */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container fade-in">
+        <h1><i class="fas fa-file-alt"></i> Create New Exam</h1>
+        
+        <form method="post" action="/teacher/create_exam" id="examForm">
+            <div class="form-group">
+                <label for="exam_name"><i class="fas fa-book"></i> Exam Name:</label>
+                <input type="text" id="exam_name" name="exam_name" required placeholder="Enter exam name">
+            </div>
+            <div class="form-group">
+                <label for="subject_name"><i class="fas fa-laptop"></i> Exam Subject:</label>
+                <input type="text" id="subject_name" name="subject_name" required placeholder="Enter subject name">
+            </div>
+            <div class="form-group">
+                <label for="start_time"><i class="fas fa-calendar-alt"></i> Start Time:</label>
+                <input type="datetime-local" id="start_time" name="start_time" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="end_time"><i class="fas fa-calendar-check"></i> End Time:</label>
+                <input type="datetime-local" id="end_time" name="end_time" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration"><i class="fas fa-clock"></i> Duration (in minutes):</label>
+                <input type="number" id="duration" name="duration" required min="1" placeholder="e.g. 60">
+            </div>
+            
+            <div class="form-group">
+                <label for="department_id"><i class="fas fa-building"></i> Department:</label>
+                <select id="department_id" name="department_id" required>
+                    <option value="">Select Department</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Create Exam</button>
+        </form>
+        
+        <!-- Loading spinner -->
+        <div class="spinner" id="loadingSpinner"></div>
+        
+        <a href="/teacher/home" class="back-link"><i class="fas fa-arrow-left"></i> Back to Teacher Home</a>
+    </div>
+
+    <script>
+        document.getElementById('examForm').addEventListener('submit', function() {
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            // Disable submit button to prevent double submission
+            document.querySelector('button[type="submit"]').disabled = true;
+        });
+
+        // Auto-calculate duration when start and end times change
+        const startTimeInput = document.getElementById('start_time');
+        const endTimeInput = document.getElementById('end_time');
+        const durationInput = document.getElementById('duration');
+
+        function updateDuration() {
+            if (startTimeInput.value && endTimeInput.value) {
+                const startTime = new Date(startTimeInput.value);
+                const endTime = new Date(endTimeInput.value);
+                
+                if (endTime > startTime) {
+                    // Calculate duration in minutes
+                    const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
+                    durationInput.value = durationMinutes;
+                }
+            }
+        }
+
+        startTimeInput.addEventListener('change', updateDuration);
+        endTimeInput.addEventListener('change', updateDuration);
+    </script>
+</body>
+</html>

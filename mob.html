@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <title>AI Social Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Testify</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body, html { -webkit-tap-highlight-color: transparent; 
+      font-family: "Plus Jakarta Sans", "system-ui", "sans-serif";
+      font-feature-settings: "cv11", "ss01";
+      font-weight: 400;
+    }
+
+
+    .skeleton {
+      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: inherit;
+    }
+
+    .skeleton-text { height: 16px; border-radius: 8px; }
+    .skeleton-circle { border-radius: 50%; }
+    .skeleton-block { height: 100px; border-radius: 16px; }
+  </style>
+
+  <style>
+        
+    .spinCon {
+        width: 4rem; 
+        height: 4rem; 
+        position: relative;
+    }
+      
+
+    @keyframes spin-variable {
+        0% {
+            transform: rotate(0deg);
+            animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1); 
+        }
+
+        30% {
+            transform: rotate(360deg);
+            animation-timing-function: cubic-bezier(0, 0, 1, 1); 
+        }
+
+        60% {
+            transform: rotate(540deg); 
+            animation-timing-function: cubic-bezier(0.0, 0.0, 0.6, 1); 
+        }
+        
+
+        100% {
+            transform: rotate(1080deg);
+            animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1); 
+        }
+    }
+    
+
+    .spinVg {
+        width: 100%;
+        height: 100%;
+        
+        animation: spin-variable 4s infinite; 
+        transform-origin: center; 
+    }
+
+    @keyframes spin-linear {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    </style>
+
+  <style>
+    .app-container {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-app);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0,0,0,0.05); 
+  }
+  
+  
+  .nav-header {
+      padding: 5px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+      background: rgba(255,255,255,0.5); 
+  }
+  
+  .nav-list {
+      position: relative;
+      display: flex;
+      list-style: none;
+      gap: 5px;
+      padding: 5px;
+      background: #fff; 
+  }
+  
+  .pill-nav-item {
+      position: relative;
+      cursor: pointer;
+      padding: 8px 24px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+      z-index: 2;
+      user-select: none;
+  }
+
+  .pill-nav-item span {
+    cursor: pointer;
+    z-index: 2;
+    user-select: none;
+    pointer-events: none;
+}
+
+.pill-ico{
+  display: none;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
+  pointer-events: none;
+}
+
+.pill-nav-item.active span {
+  color: #000;
+  font-weight: 600;
+}
+  
+  .pill-nav-item.active {
+      color: #000;
+      font-weight: 600;
+  }
+  
+  .nav-pill {
+      position: absolute;
+      top: 5px;
+      left: 0;
+      height: 40px; 
+      background: var(--pill-color);
+      border-radius: 20px;
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      opacity: 0;
+  }
+  
+  .viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+  }
+  
+  .content-track {
+      display: flex;
+      width: 500%;
+      height: 100%;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .tab-content {
+    width: 20%;
+    height: 100%;
+    padding: 10px 60px 40px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    overflow-y: auto;
+    scrollbar-width: thin; 
+    scrollbar-color: #e2e2e2 transparent; 
+    scrollbar-arrow-color: transparent;
+  }
+  
+  
+  .tab-content::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+  background-color: transparent;
+  }
+  
+  .tab-content::-webkit-scrollbar-thumb {
+  background-color: #A8A8A8;
+  border-radius: 3px;
+  }
+  
+  .tab-content::-webkit-scrollbar-track {
+  background: transparent;
+  }
+  
+  
+  .tab-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; 
+  }
+  
+  
+  
+  .placeholder-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      margin-top: 20px;
+      color: var(--text-muted);
+      font-size: 2rem;
+      font-weight: 600;
+      background: var(--card-bg); 
+      border-radius: 24px;
+      border: 2px dashed rgba(0,0,0,0.05);
+  }
+  .outer-nav-list {
+    box-shadow: 0px 20px 20px 8px white;
+  }
+  
+
+  @media (max-width: 768px) {
+    .outer-nav-list , .nav-list , .nav-header {
+      background-color: rgb(8, 8, 8);
+      box-shadow: none;
+    }
+    .tab-content{
+      padding: 0;
+    }
+  
+    .nav-header {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      border-radius: 25px 25px 0 0;
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-header.show {
+      transform: translateY(0);
+    }
+
+    .nav-header {
+      transition-delay: 0.1s;
+    }
+
+  .pill-nav-item span {
+    display: none;
+}
+
+.pill-ico{
+  display: flex;
+}
+
+  }
+  
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+
+          rotate: {
+            '360': '360deg', 
+          },
+          colors: {
+            primaryPrf: '#212121',
+            primaryHoverPrf: '#212131',
+            darkTextPrf: '#111827',
+            lightTextPrf: '#6b7280',
+            cardBgPrf: '#ffffff',
+            'accent': '#1f2937', 
+          },
+          boxShadow: { 'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)' },
+          animation: {
+            shimmer: 'shimmer 2s infinite linear',
+          },
+          keyframes: {
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            }
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+  
+        --bg-body: #eef2f5; 
+        --bg-app: #ffffff;
+        --text-main: #1d1d1f; 
+        --text-muted: #86868b;
+        --accent: #0071e3; 
+        --pill-color: #dddddde5; 
+        --card-bg: #f2f2f7;
+        --shadow-soft: 0 10px 40px rgba(0,0,0,0.08); 
+    }
+
+
+    body, html {
+      font-family: "Plus Jakarta Sans", "system-ui", "sans-serif";
+      font-feature-settings: "cv11", "ss01";
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #eef1f5 100%);
+      height: 100vh;
+      overflow: hidden;
+      color: var(--text-main);
+      width: 100%;
+    }
+
+
+</style>
+<style>
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  }
+  .pulse-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+</style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+  <div class="app-container w-full pb-20">
+    <nav class="nav-header">
+      <div class="outer-nav-list flex h-16 w-full items-center ">
+          <div class="flex-grow flex justify-center">
+              <ul class="nav-list">
+                  <div class="nav-pill"></div>
+                  <li class="pill-nav-item active" data-index="0"><span>Leads</span><div class="pill-ico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z" stroke="currentColor" stroke-width="1.5"/><path d="M15 18H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </div></li>
+                  
+                  <li class="pill-nav-item" data-index="1"><span>Competitors</span><div class="pill-ico">
+                  <svg fill="currentColor" width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M16 6.28a1.23 1.23 0 0 0-.62-1.07l-6.74-4a1.27 1.27 0 0 0-1.28 0l-6.75 4a1.25 1.25 0 0 0 0 2.15l1.92 1.12v2.81a1.28 1.28 0 0 0 .62 1.09l4.25 2.45a1.28 1.28 0 0 0 1.24 0l4.25-2.45a1.28 1.28 0 0 0 .62-1.09V8.45l1.24-.73v2.72H16V6.28zm-3.73 5L8 13.74l-4.22-2.45V9.22l3.58 2.13a1.29 1.29 0 0 0 1.28 0l3.62-2.16zM8 10.27l-6.75-4L8 2.26l6.75 4z"/></svg>
+                  </div></li>
+                  
+                  <li class="pill-nav-item" data-index="2"><span>Mentions</span><div class="pill-ico">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 13C9 15.2091 10.7909 17 13 17C14.1046 17 15.1046 16.5523 15.8284 15.8284M9 13H5M9 13C9 11.448 9.88388 10.1025 11.1757 9.43928M5 13C5 13.5523 4.55228 14 4 14C3.44772 14 3 13.5523 3 13C3 12.4477 3.44772 12 4 12C4.55228 12 5 12.4477 5 13ZM19.2929 6.70711C19.1119 6.52614 19 6.27614 19 6C19 5.44772 19.4477 5 20 5C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7C19.7239 7 19.4739 6.88807 19.2929 6.70711ZM19.2929 6.70711L15.8284 10.1716M9.37149 4.92872C9.73983 4.78126 10 4.42101 10 4C10 3.44772 9.55228 3 9 3C8.44772 3 8 3.44772 8 4C8 4.55228 8.44772 5 9 5C9.13127 5 9.25664 4.97471 9.37149 4.92872ZM9.37149 4.92872L11.1757 9.43928M15.8284 15.8284C16.5523 15.1046 17 14.1046 17 13C17 11.8954 16.5523 10.8954 15.8284 10.1716M15.8284 15.8284L19.2929 19.2929M19.2929 19.2929C19.1119 19.4739 19 19.7239 19 20C19 20.5523 19.4477 21 20 21C20.5523 21 21 20.5523 21 20C21 19.4477 20.5523 19 20 19C19.7239 19 19.4739 19.1119 19.2929 19.2929ZM15.8284 10.1716C15.1046 9.44772 14.1046 9 13 9C12.3428 9 11.7227 9.15847 11.1757 9.43928" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div></li>
+                  <li class="pill-nav-item" data-index="3"><span>Engagement</span><div class="pill-ico">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21C4 17.4735 6.60771 14.5561 10 14.0709M19.8726 15.2038C19.8044 15.2079 19.7357 15.21 19.6667 15.21C18.6422 15.21 17.7077 14.7524 17 14C16.2923 14.7524 15.3578 15.2099 14.3333 15.2099C14.2643 15.2099 14.1956 15.2078 14.1274 15.2037C14.0442 15.5853 14 15.9855 14 16.3979C14 18.6121 15.2748 20.4725 17 21C18.7252 20.4725 20 18.6121 20 16.3979C20 15.9855 19.9558 15.5853 19.8726 15.2038ZM15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div></li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+
+    <div class="viewport">
+        <div class="content-track">
+            
+            <div class="tab-content">
+                <nav class="bg-white sticky top-0 z-30 md:border-b border-gray-100 ">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 box-shadow-[1px_1px_20px_5px_#fff]">
+                      <div class="flex justify-between flex-row-reverse items-center h-16">
+                        <div class="flex items-center">
+                            <svg class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/><circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/><circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/></svg>
+                        </div>
+                        <h1 class="text-lg font-semibold text-gray-800 flex-grow text-left md:text-left">
+                          My Exams
+                        </h1>
+                      </div>
+                    </div>
+                  </nav>
+                <div class="flex justify-center mt-1 mb-12">
+                  <div class="inline-flex flex-wrap gap-8 bg-gray-100 p-2 rounded-full shadow-sm">
+                    <button onclick="switchTabExr('today')" 
+                            id="pill-todayExr"
+                            class="pill-activeExr px-8 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all bg-gray-800 text-white">
+                      Today
+                    </button>
+                    <button onclick="switchTabExr('upcoming')" 
+                            id="pill-upcomingExr"
+                            class="pill-inactiveExr px-6 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all">
+                      Upcoming
+                    </button>
+                    <button onclick="switchTabExr('ended')" 
+                            id="pill-endedExr"
+                            class="pill-inactiveExr px-6 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all">
+                      Ended
+                    </button>
+                  </div>
+                </div>
+                <div class="grid gap-4 md:grid-cols-2 px-4 lg:grid-cols-3" id="exam-containerExr">
+                    <div class="h-full w-full flex  justify-center items-center">
+                        <div class="spinCon">
+                            <svg class="spinVg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/>
+                                <circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" transform="rotate(45 17.657 6.343)"/>
+                                <circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" transform="rotate(45 6.343 17.657)"/>
+                                <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" transform="rotate(45 12 12)"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="empty-stateExr" class="hidden text-center py-24">
+                  <div class="w-48 h-48 mx-auto bg-gray-200 border-2 border-dashed border-gray-300 rounded-3xl mb-8"></div>
+                  <h3 id="empty-titleExr" class="text-3xl font-semibold text-gray-800 mb-4">No exams found</h3>
+                  <p id="empty-messageExr" class="text-lg text-gray-500 max-w-md mx-auto"></p>
+                </div>
+
+            </div>
+            <div class="tab-content">
+              <nav class="bg-white sticky top-0 z-30 md:border-b border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="flex justify-between items-center h-16">
+                    <h1 class="text-lg font-semibold text-darkTextPrf flex-1 text-center md:text-left md:flex-none">Create Exam</h1>
+                  </div>
+                </div>
+              </nav>
+              <div class="placeholder-screen">2</div>
+
+            </div>
+
+            <div class="tab-content">
+              <nav class="bg-white sticky top-0 z-30 md:border-b border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="flex justify-between items-center h-16">
+                    <h1 class="text-lg font-semibold text-darkTextPrf flex-1 text-center md:text-left md:flex-none">Leaderboard</h1>
+                  </div>
+                </div>
+              </nav>
+              <div class="pb-8 max-w-4xl px-4">
+                <div class="flex justify-center mb-12">
+                  <div class="inline-flex flex-wrap gap-8 bg-gray-100 p-2 rounded-full shadow-sm">
+                    <button onclick="switchTabExl('leaderboard')" 
+                            id="pill-leaderboardExl"
+                            class="px-8 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all bg-accent text-white">
+                      Leaderboards
+                    </button>
+                    <button onclick="switchTabExl('attempts')" 
+                            id="pill-attemptsExl"
+                            class="px-6 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-50">
+                      My Attempts
+                    </button>
+                  </div>
+                </div>
+              
+                <!-- ==================== LEADERBOARD TAB ==================== -->
+                <div id="leaderboardTabExl" class="inner-tab-content">
+                  <div class="bg-white rounded-lg p-1 mb-2">
+                    <div class="flex flex-row items-center justify-evenly sm:flex-row gap-4 mb-6 px-3">
+                      <div class="text-2xl font-semibold  text-accent ">Exam Scores</div>
+                      <div class="relative w-fit">
+                        <select
+                          id="examSelectExl"
+                          class="block w-fit  focus:shadow-none focus:border-none focus:ring-0 focus:ring-offset-0 focus:ring-none cursor-pointer appearance-none rounded-full border border-gray-300 bg-white py-3 pl-4 pr-10 text-gray-700 shadow-sm transition duration-150 ease-in-out hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
+                          onchange="fetchLeaderboardExl()"
+                        >
+                          <option value="">Select an Exam</option>
+                        </select>
+                      
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                          <svg
+                            class="h-5 w-5 "
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="leaderboardLoadingExl" class="space-y-6">
+                      <div class="bg-gray-100 border border border-gray-200 rounded-lg p-5">
+                        <div class="h-5 w-32 bg-gray-200 skeleton skeleton-text mb-3"></div>
+                        <div class="h-6 w-48 bg-gray-200 skeleton skeleton-text"></div>
+                      </div>
+                      <div class="overflow-hidden rounded-lg border border-gray-200">
+                        <table class="min-w-full">
+                          <thead class="bg-gray-50">
+                            <tr>
+                              <th class="px-6 py-4"><div class="h-4 w-12 skeleton skeleton-text"></div></th>
+                              <th class="px-6 py-4"><div class="h-4 w-32 skeleton skeleton-text"></div></th>
+                              <th class="px-6 py-4"><div class="h-4 w-28 skeleton skeleton-text"></div></th>
+                              <th class="px-6 py-4"><div class="h-4 w-20 skeleton skeleton-text"></div></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr><td class="px-6 py-5"><div class="h-4 w-8 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-40 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-32 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-16 skeleton skeleton-text"></div></td></tr>
+                            <tr><td class="px-6 py-5"><div class="h-4 w-8 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-36 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-36 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-20 skeleton skeleton-text"></div></td></tr>
+                            <tr><td class="px-6 py-5"><div class="h-4 w-8 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-44 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-30 skeleton skeleton-text"></div></td>
+                                <td class="px-6 py-5"><div class="h-5 w-18 skeleton skeleton-text"></div></td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div id="leaderboardContainerExl" class="hidden">
+                      <div id="yourScoreExl" class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6"></div>
+                      <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                          <thead class="bg-gray-50">
+                            <tr>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">Rank</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">Username</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">Roll Number</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">Score</th>
+                            </tr>
+                          </thead>
+                          <tbody id="leaderboardBodyExl" class="divide-y divide-gray-200">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+              
+                    <!-- No Data State -->
+                    <div id="leaderboardEmptyExl" class="hidden text-center py-12">
+                      <div class="text-gray-400 mb-4">
+                        <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                      </div>
+                      <p class="text-gray-600 font-medium">No leaderboard available</p>
+                      <p class="text-sm text-gray-500 mt-1">Select an exam or wait for results to be published.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="attemptsTabExl" class="inner-tab-content hidden">
+                  <div class="bg-white rounded-lg p-2">
+                    <h2 class="text-2xl font-semibold text-accent mb-6 px-4">My Exam Attempts</h2>
+
+                    <div id="attemptsLoadingExl" class="space-y-5">
+                      <div class="border border-gray-200 rounded-lg p-5 flex flex-col sm:flex-row justify-between">
+                        <div class="flex-1 space-y-3">
+                          <div class="h-6 w-80 skeleton skeleton-text"></div>
+                          <div class="h-4 w-48 skeleton skeleton-text"></div>
+                          <div class="h-4 w-40 skeleton skeleton-text"></div>
+                          <div class="h-4 w-56 skeleton skeleton-text"></div>
+                        </div>
+                        <div class="mt-4 sm:mt-0">
+                          <div class="h-8 w-32 skeleton skeleton-text"></div>
+                        </div>
+                      </div>
+                      <div class="border border-gray-200 rounded-lg p-5 flex flex-col sm:flex-row justify-between">
+                        <div class="flex-1 space-y-3">
+                          <div class="h-6 w-72 skeleton skeleton-text"></div>
+                          <div class="h-4 w-44 skeleton skeleton-text"></div>
+                          <div class="h-4 w-52 skeleton skeleton-text"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div id="attemptsContainerExl" class="space-y-4 hidden"></div>
+
+                    <div id="attemptsEmptyExl" class="text-center py-16 hidden">
+                      <div class="text-gray-400 mb-6">
+                        <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                      </div>
+                      <p class="text-xl font-semibold text-gray-700">No attempts yet</p>
+                      <p class="text-gray-500 mt-2">Your exam attempts will appear here once you start one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="tab-content">
+                
+              
+              <nav class="bg-white sticky top-0 z-30 md:border-b border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="flex justify-between items-center h-16">
+                    <h1 class="text-lg font-semibold text-darkTextPrf flex-1 text-center md:text-left md:flex-none">My Profile</h1>
+                  </div>
+                </div>
+              </nav>
+            
+              <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            
+                  <div class="lg:col-span-5 xl:col-span-4">
+                    <div class="bg-cardBgPrf rounded-3xl p-6 text-center md:border border-gray-100 relative overflow-hidden">
+            
+                      <div id="loadingProfilePrf" class="absolute inset-0 bg-white z-10 flex flex-col items-center justify-start pt-8 space-y-6">
+                        <div class="h-28 w-28 skeleton skeleton-circle"></div>
+                        <div class="w-48 h-6 skeleton skeleton-text mx-auto"></div>
+                        <div class="w-40 h-4 skeleton skeleton-text mx-auto"></div>
+                        <div class="w-full h-12 skeleton rounded-xl"></div>
+                        <div class="space-y-4 w-full px-4">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                              <div class="w-10 h-10 skeleton skeleton-circle"></div>
+                              <div class="w-32 h-5 skeleton skeleton-text"></div>
+                            </div>
+                            <div class="w-20 h-5 skeleton skeleton-text"></div>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                              <div class="w-10 h-10 skeleton skeleton-circle"></div>
+                              <div class="w-32 h-5 skeleton skeleton-text"></div>
+                            </div>
+                            <div class="w-20 h-5 skeleton skeleton-text"></div>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                              <div class="w-10 h-10 skeleton skeleton-circle"></div>
+                              <div class="w-20 h-5 skeleton skeleton-text"></div>
+                            </div>
+                            <div class="w-16 h-6 skeleton rounded-full"></div>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                              <div class="w-10 h-10 skeleton skeleton-circle"></div>
+                              <div class="w-24 h-5 skeleton skeleton-text"></div>
+                            </div>
+                            <div class="w-24 h-5 skeleton skeleton-text"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="relative inline-block mb-4 mt-2">
+                        <div class="h-28 w-28 rounded-full p-1 border-2 border-gray-100 mx-auto">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Avatar" class="h-full w-full rounded-full bg-gray-50 object-cover" id="avatarImgPrf">
+                        </div>
+                        <div class="absolute bottom-1 right-1 bg-white rounded-full p-1.5 shadow-md border border-gray-100 cursor-pointer hover:bg-gray-50">
+                            <i class="fas fa-camera text-gray-500 text-xs"></i>
+                        </div>
+                      </div>
+            
+                      <h2 id="usernamePrf" class="text-xl font-semibold text-darkTextPrf">Student Name</h2>
+                      <p id="emailPrf" class="text-sm text-lightTextPrf mb-6">student@example.com</p>
+            
+                      <button id="openFeedbackModalBtnPrf" class="w-full bg-primaryPrf hover:bg-primaryHoverPrf text-white font-medium py-3 px-4 rounded-2xl shadow-sm shadow-gray-200 transition-all transform active:scale-95 mb-8 flex items-center justify-center">
+                        <i class="fas fa-pen-fancy mr-2"></i> Write Feedback
+                      </button>
+                      <button id="logoutBtnPrf">logout</button>
+            
+                      <div class="text-left space-y-1">
+                        <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors cursor-default">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Roll Number</span>
+                            </div>
+                            <span id="rollPrf" class="text-sm font-semibold text-gray-900">--</span>
+                        </div>
+                        <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors cursor-default">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Department</span>
+                            </div>
+                            <span id="deptPrf" class="text-sm font-semibold text-gray-900">--</span>
+                        </div>
+                        <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors cursor-default">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Status</span>
+                            </div>
+                            <span id="statusPrf" class="px-2.5 py-1 rounded-full text-xs font-semibold">--</span>
+                        </div>
+                        <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors cursor-default">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Team Lead</span>
+                            </div>
+                            <span id="teamLeadPrf" class="text-sm text-gray-500"><i class="fas fa-chevron-right"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="lg:col-span-7 xl:col-span-8">
+                    <div class="flex items-center justify-between mb-4 px-1">
+                        <h3 class="text-lg font-semibold text-darkTextPrf">Recent Feedback</h3>
+                        <button onclick="refreshHistoryPrf()" class="text-sm text-primaryPrf font-medium hover:underline">View All</button>
+                    </div>
+            
+                    <div id="feedbackListContainerPrf" class="space-y-4">
+                      <div id="feedbackLoaderPrf" class="space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                          <div class="flex justify-between items-center mb-3">
+                            <div class="flex space-x-1">
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                            </div>
+                            <div class="w-20 h-3 skeleton skeleton-text"></div>
+                          </div>
+                          <div class="space-y-2">
+                            <div class="h-4 skeleton skeleton-text w-full"></div>
+                            <div class="h-4 skeleton skeleton-text w-11/12"></div>
+                            <div class="h-4 skeleton skeleton-text w-10/12"></div>
+                          </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                          <div class="flex justify-between items-center mb-3">
+                            <div class="flex space-x-1">
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                              <div class="w-4 h-4 skeleton skeleton-text rounded"></div>
+                            </div>
+                            <div class="w-20 h-3 skeleton skeleton-text"></div>
+                          </div>
+                          <div class="space-y-2">
+                            <div class="h-4 skeleton skeleton-text w-11/12"></div>
+                            <div class="h-4 skeleton skeleton-text w-full"></div>
+                            <div class="h-4 skeleton skeleton-text w-9/12"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="feedbackListPrf" class="space-y-4 hidden"></div>
+                      <div id="feedbackEmptyPrf" class="hidden bg-white rounded-2xl p-10 shadow-soft text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
+                            <i class="far fa-comment-dots text-2xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-gray-900 font-medium">No feedback yet</h4>
+                        <p class="text-gray-500 text-sm mt-2">Your submitted feedback will appear here.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </main>
+      
+
+            </div>
+
+            <!-- <div class="tab-content">
+                <div class="placeholder-screen">5</div>
+            </div> -->
+
+        </div>
+    </div>
+</div>
+
+
+
+<div id="feedbackModalPrf" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" id="modalBackdropPrf"></div>
+
+  <div class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      
+      <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-md">
+        
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+              <h3 class="text-xl font-semibold leading-6 text-gray-900 mb-1" id="modal-title">Rate Experience</h3>
+              <p class="text-sm text-gray-500 mb-6">Share your thoughts with the administration.</p>
+              
+              <form id="feedbackFormPrf">
+
+                <div class="mb-6 flex flex-col items-center">
+                  <div class="flex space-x-2" id="starWrapperPrf">
+                      <i class="fas fa-star text-3xl text-gray-200 cursor-pointer hover:scale-110 transition-transform" data-value="1"></i>
+                      <i class="fas fa-star text-3xl text-gray-200 cursor-pointer hover:scale-110 transition-transform" data-value="2"></i>
+                      <i class="fas fa-star text-3xl text-gray-200 cursor-pointer hover:scale-110 transition-transform" data-value="3"></i>
+                      <i class="fas fa-star text-3xl text-gray-200 cursor-pointer hover:scale-110 transition-transform" data-value="4"></i>
+                      <i class="fas fa-star text-3xl text-gray-200 cursor-pointer hover:scale-110 transition-transform" data-value="5"></i>
+                  </div>
+                  <input type="hidden" id="ratingInputPrf" name="rating" value="0">
+                  <p class="text-xs text-primaryPrf font-medium mt-2 h-4" id="ratingLabelPrf"></p>
+                </div>
+
+                <div class="mb-4">
+                  <label for="messagePrf" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <textarea id="messagePrf" rows="4" class="w-full rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:border-primaryPrf focus:ring-primaryPrf text-sm p-3 transition-all outline-none" placeholder="Type your feedback here..." required></textarea>
+                </div>
+                
+                <div id="formStatusPrf" class="text-center text-sm font-medium h-5 mb-2"></div>
+
+                <button type="submit" id="submitBtnPrf" class="w-full rounded-xl bg-primaryPrf px-3 py-3.5 text-sm font-semibold text-white shadow-lg shadow-gray-200 hover:bg-primaryHoverPrf transition-all active:scale-95">
+                  Submit Feedback
+                </button>
+                
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button type="button" id="closeModalBtnPrf" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const navItems = document.querySelectorAll('.pill-nav-item');
+    const pill = document.querySelector('.nav-pill');
+    const contentTrack = document.querySelector('.content-track');
+    let activeIndex = 0;
+
+
+    function ZTab(){  //load exam
+        loadExamsExr();
+    }
+    function FTab(){  //creating
+        
+    }
+    function STab(){  //leaderboard
+
+    switchTabExl('leaderboard');
+    }
+    function TTab()  {  //profile
+        loadProfilePrf();
+    }
+    
+    const tabInitFunctions = {
+        0: ZTab,
+        1: FTab,
+        2: STab,
+        3: TTab
+    };
+    
+    // auto-refresh configuration (in minutes) 
+    const tabRefreshMinutes = {
+        0: 1,    // exam
+        1: 5,    // create
+        2: 2,    // leaderboard
+        3: 10    //proflie
+       
+    };
+
+    const refreshIntervals = {};
+    
+    function startTabRefresh(index) {
+        if (refreshIntervals[index]) {
+            clearInterval(refreshIntervals[index]);
+        }
+    
+        const minutes = tabRefreshMinutes[index];
+        if (!minutes || minutes <= 0) return; 
+    
+        const ms = minutes * 60 * 1000;
+    
+
+        tabInitFunctions[index]();
+   
+        refreshIntervals[index] = setInterval(() => {
+            console.log(`Auto-refreshing tab ${index} (${minutes} min interval)`);
+            tabInitFunctions[index]();
+        }, ms);
+    }
+    
+    function updatePill(element) {
+        const rect = element.getBoundingClientRect();
+        const parentRect = element.parentElement.getBoundingClientRect();
+        const left = rect.left - parentRect.left;
+        const width = rect.width;
+    
+        pill.style.width = `${width}px`;
+        pill.style.transform = `translateX(${left}px)`;
+        pill.style.opacity = '1';
+    }
+    
+    function slideContent(index) {
+        const percentage = index * -20;
+        contentTrack.style.transform = `translateX(${percentage}%)`;
+    }
+
+    navItems.forEach((item) => {
+        item.addEventListener('click', (e) => {
+            const target = e.target.closest('.pill-nav-item');
+            const newIndex = parseInt(target.dataset.index);
+    
+            if (newIndex === activeIndex) return;
+    
+            // UI updates
+            navItems.forEach(nav => nav.classList.remove('active'));
+            target.classList.add('active');
+            updatePill(target);
+            slideContent(newIndex);
+    
+            // Run init once for the newly active tab
+            if (tabInitFunctions[newIndex]) {
+                tabInitFunctions[newIndex]();
+            }
+    
+            // Start/restart auto-refresh for this tab (keeps running even after switching away)
+            startTabRefresh(newIndex);
+    
+            activeIndex = newIndex;
+        });
+    });
+    
+
+    window.addEventListener('load', () => {
+        const initialActive = document.querySelector('.pill-nav-item.active');
+        if (initialActive) {
+            updatePill(initialActive);
+            slideContent(activeIndex);
+
+            if (tabInitFunctions[activeIndex]) {
+                tabInitFunctions[activeIndex]();
+            }
+
+            startTabRefresh(activeIndex);
+        }
+    
+        setTimeout(() => {
+            document.querySelector('.nav-header').classList.add('show');
+        }, 100);
+    });
+
+    window.addEventListener('resize', () => {
+        const active = document.querySelector('.pill-nav-item.active');
+        if (active) updatePill(active);
+    });
+</script>
+
+
+<!-- allexams -->
+
+<script>
+  let currentTabExr = 'today';
+  let examsDataExr = { today_exams: [], upcoming_exams: [], ended_exams: [] };
+
+  function formatDateExr(dateStr) {
+    return new Date(dateStr).toLocaleString('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true
+    }).replace(',', ' •');
+  }
+
+  function switchTabExr(tab) {
+    currentTabExr = tab;
+
+    document.querySelectorAll('[id^="pill-"]').forEach(btn => {
+      btn.className = btn.className.replace('bg-gray-800 text-white', 'bg-transparent text-gray-600');
+    });
+
+    const activeBtnExr = document.getElementById(`pill-${tab}Exr`);
+    activeBtnExr.classList.remove('bg-transparent', 'text-gray-600');
+    activeBtnExr.classList.add('bg-gray-800', 'text-white');
+
+    renderExamsExr();
+  }
+
+  function renderExamsExr() {
+    const containerExr = document.getElementById('exam-containerExr');
+    const emptyExr = document.getElementById('empty-stateExr');
+    const titleExr = document.getElementById('empty-titleExr');
+    const msgExr = document.getElementById('empty-messageExr');
+    const examsExr = examsDataExr[`${currentTabExr}_exams`];
+
+    if (examsExr.length === 0) {
+      containerExr.innerHTML = '';
+      emptyExr.classList.remove('hidden');
+      if (currentTabExr === 'today') {
+        titleExr.textContent = "No live exams right now";
+        msgExr.textContent = "Come back when your exam is scheduled to begin.";
+      } else if (currentTabExr === 'upcoming') {
+        titleExr.textContent = "You're all caught up!";
+        msgExr.textContent = "No upcoming exams. Enjoy your free time.";
+      } else {
+        titleExr.textContent = "No completed exams yet";
+        msgExr.textContent = "Your results will appear here after you submit an exam.";
+      }
+      return;
+    }
+
+      emptyExr.classList.add('hidden');
+      containerExr.innerHTML = examsExr.map(exam => {
+      const isLive = currentTabExr === 'today';
+      const attempted = !!exam.attempt;
+      const score = attempted && exam.attempt.score !== null ? exam.attempt.score : null;
+      const scoreHidden = attempted && !exam.attempt.is_score_public;
+
+      return `
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden card-hover transition-all duration-300">
+          <div class="${isLive ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'} px-6 py-2">
+            <h3 class="text-2xl font-semibold">${exam.name}</h3>
+            <p class="mt-1 text-sm opacity-90">${exam.subject}</p>
+          </div>
+
+          <div class="p-4 space-y-3">
+            <div class="grid grid-cols-2 gap-8">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Questions</p>
+                <p class="text-3xl font-semibold text-gray-800 mt-2">${exam.question_count}</p>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">Duration</p>
+                <p class="text-3xl font-semibold text-gray-800 mt-2">${exam.duration_minutes} min</p>
+              </div>
+            </div>
+
+            <div class="space-y-3 text-gray-600">
+              <div class="flex justify-between text-sm">
+                <span class="font-semibold">Start</span>
+                <span>${formatDateExr(exam.start_time)}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="font-semibold">End</span>
+                <span>${formatDateExr(exam.end_time)}</span>
+              </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-200 flex items-center justify-between">
+              ${isLive ? `
+                <div class="flex items-center gap-3">
+                  <div class="pulse-dot"></div>
+                  <span class="font-semibold text-green-600">Live Now</span>
+                </div>
+                <a href="/student/exam/${exam.id}/start"
+                   class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition">
+                  Start Exam
+                </a>
+              ` : currentTabExr === 'ended' ? `
+                <div>
+                  ${attempted ? `
+                    <p class="text-xs text-gray-500 font-medium">Your Score</p>
+                    ${scoreHidden 
+                      ? '<p class="text-amber-600 font-semibold text-xl mt-2">Hidden by instructor</p>'
+                      : `<p class="text-4xl font-semibold text-gray-800 mt-2">${score} / ${exam.question_count}</p>`
+                    }
+                  ` : '<span class="text-gray-500 font-medium">Not attempted</span>'}
+                </div>
+                ${attempted ? `
+                  <a href="/student/exam/${exam.id}/result"
+                     class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-10 rounded-2xl shadow-lg transform hover:scale-105 transition">
+                    View Result
+                  </a>
+                ` : '<div></div>'}
+              ` : `
+                <span class="px-5 py-2 bg-blue-100 text-blue-800 font-semibold text-xs rounded-full">Scheduled</span>
+                <div></div>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function loadExamsExr() {
+    try {
+      const res = await fetch('/api/student/exams');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      examsDataExr = data;
+
+      ['today', 'upcoming', 'ended'].forEach(key => {
+        const count = data[`${key}_exams`].length;
+      });
+
+      renderExamsExr();
+    } catch {
+    document.getElementById('exam-containerExr').innerHTML = `<div class="col-span-full text-center py-20 text-xl text-red-600">Failed to load exams</div>`;
+    }
+  }
+</script>
+
+
+<script>
+  let currentUserIdPrf = null;
+  let currentRatingPrf = 0;
+
+  const stars = document.querySelectorAll('#starWrapperPrf i');
+  const ratingInput = document.getElementById('ratingInputPrf');
+  const ratingLabel = document.getElementById('ratingLabelPrf');
+  const labels = ["Terrible", "Bad", "Okay", "Good", "Excellent"];
+
+  function updateStars(value) {
+      stars.forEach(star => {
+          const starVal = parseInt(star.getAttribute('data-value'));
+          if (starVal <= value) {
+              star.classList.remove('text-gray-200');
+              star.classList.add('text-yellow-400');
+          } else {
+              star.classList.remove('text-yellow-400');
+              star.classList.add('text-gray-200');
+          }
+      });
+      if (value > 0) {
+          ratingLabel.textContent = labels[value - 1];
+      } else {
+          ratingLabel.textContent = "";
+      }
+  }
+
+  stars.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+          const val = parseInt(star.getAttribute('data-value'));
+          updateStars(val);
+      });
+      star.addEventListener('click', () => {
+          currentRatingPrf = parseInt(star.getAttribute('data-value'));
+          ratingInput.value = currentRatingPrf;
+          updateStars(currentRatingPrf);
+      });
+  });
+
+  document.getElementById('starWrapperPrf').addEventListener('mouseleave', () => {
+      updateStars(currentRatingPrf);
+  });
+
+
+  const modalPrf = document.getElementById('feedbackModalPrf');
+  const openBtnPrf = document.getElementById('openFeedbackModalBtnPrf');
+  const closeBtnPrf = document.getElementById('closeModalBtnPrf');
+
+  function toggleModalPrf(show) {
+    if (show) {
+      modalPrf.classList.remove('hidden');
+      document.getElementById('feedbackFormPrf').reset();
+      document.getElementById('formStatusPrf').textContent = '';
+      currentRatingPrf = 0;
+      ratingInput.value = 0;
+      updateStars(0);
+    } else {
+      modalPrf.classList.add('hidden');
+    }
+  }
+
+  openBtnPrf.addEventListener('click', () => toggleModalPrf(true));
+  closeBtnPrf.addEventListener('click', () => toggleModalPrf(false));
+  
+  modalPrf.addEventListener('click', (e) => {
+    if (e.target.id === 'modalBackdropPrf') toggleModalPrf(false);
+  });
+
+  async function loadProfilePrf() {
+    try {
+      const res = await fetch('/api/student/me', { credentials: 'include' });
+      if (!res.ok) throw new Error('Unauthorized');
+      const data = await res.json();
+
+      document.getElementById('loadingProfilePrf').classList.add('hidden');
+      document.getElementById('avatarImgPrf').src = `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.username}`;
+      
+      document.getElementById('usernamePrf').textContent = data.username || 'Student';
+      document.getElementById('emailPrf').textContent = data.email || '';
+      document.getElementById('rollPrf').textContent = data.roll_number || 'N/A';
+      document.getElementById('deptPrf').textContent = data.department?.name || 'Unassigned';
+
+      const statusEl = document.getElementById('statusPrf');
+      if (data.approved) {
+          statusEl.textContent = 'Active';
+          statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700';
+      } else {
+          statusEl.textContent = 'Pending';
+          statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700';
+      }
+
+      const leadEl = document.getElementById('teamLeadPrf');
+      if (data.is_team_lead) {
+          leadEl.innerHTML = 'Lead <i class="fas fa-crown text-yellow-500 ml-1"></i>';
+          leadEl.className = 'text-sm font-semibold text-indigo-600';
+      } else {
+          leadEl.innerHTML = 'Member';
+          leadEl.className = 'text-sm text-gray-500';
+      }
+
+      currentUserIdPrf = data.id;
+      loadFeedbackHistoryPrf(data.id);
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('loadingProfilePrf').innerHTML = `
+        <p class="text-red-500 font-medium">Please Log In</p>
+        <a href="/login" class="text-sm underline mt-2 text-gray-500">Go to Login</a>
+      `;
+    }
+  }
+
+  async function loadFeedbackHistoryPrf(userId) {
+    const listEl = document.getElementById('feedbackListPrf');
+    const loaderEl = document.getElementById('feedbackLoaderPrf');
+    const emptyEl = document.getElementById('feedbackEmptyPrf');
+
+    loaderEl.classList.remove('hidden');
+    listEl.classList.add('hidden');
+
+    try {
+      const res = await fetch(`/api/feedback/user/${userId}`);
+      const { feedback } = await res.json();
+
+      loaderEl.classList.add('hidden');
+
+      if (!feedback || feedback.length === 0) {
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      listEl.classList.remove('hidden');
+      listEl.innerHTML = ''; 
+
+      feedback.forEach(fb => {
+        const starsHtml = Array(5).fill(0).map((_, i) => 
+          i < fb.rating ? '<i class="fas fa-star text-yellow-400 text-xs"></i>' : '<i class="fas fa-star text-gray-200 text-xs"></i>'
+        ).join('');
+
+        let replyBlock = '';
+        if (fb.feedback_replies?.length > 0) {
+          replyBlock = `
+              <div class="mt-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                  <p class="text-xs font-semibold text-primaryPrf mb-1">Response:</p>
+                  <p class="text-xs text-gray-600">${fb.feedback_replies[0].reply_message}</p>
+              </div>
+          `;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-soft transition-shadow';
+        card.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+              <div class="flex space-x-1">${starsHtml}</div>
+              <span class="text-xs text-gray-400 font-medium">${new Date(fb.created_at).toLocaleDateString()}</span>
+          </div>
+          <p class="text-gray-800 text-sm leading-relaxed font-medium">${fb.message}</p>
+          ${replyBlock}
+        `;
+        listEl.appendChild(card);
+      });
+
+    } catch (err) {
+      loaderEl.innerHTML = '<p class="text-red-500 text-sm">Failed to load history.</p>';
+    }
+  }
+
+  function refreshHistoryPrf() {
+    if(currentUserIdPrf) loadFeedbackHistoryPrf(currentUserIdPrf);
+  }
+
+  document.getElementById('feedbackFormPrf').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('messagePrf').value.trim();
+    const btn = document.getElementById('submitBtnPrf');
+    const status = document.getElementById('formStatusPrf');
+
+    if (currentRatingPrf === 0) {
+      status.textContent = "Please tap a star to rate.";
+      status.className = "text-center text-sm font-medium text-red-500 mb-2";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    try {
+      const res = await fetch('/api/feedback/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: currentUserIdPrf, rating: currentRatingPrf, message: msg }),
+          credentials: 'include'
+      });
+
+      if (res.ok) {
+          status.textContent = "Feedback Sent Successfully!";
+          status.className = "text-center text-sm font-medium text-green-600 mb-2";
+          setTimeout(() => {
+              toggleModalPrf(false);
+              refreshHistoryPrf();
+              btn.disabled = false;
+              btn.innerHTML = "Submit Feedback";
+          }, 1000);
+      } else {
+          throw new Error();
+      }
+    } catch (err) {
+      status.textContent = "Failed to send. Try again.";
+      status.className = "text-center text-sm font-medium text-red-500 mb-2";
+      btn.disabled = false;
+      btn.innerHTML = "Submit Feedback";
+    }
+  });
+
+  document.getElementById('logoutBtnPrf').addEventListener('click', () => {
+    fetch('/logout').then(() => window.location.href = '/login');
+  });
+  
+</script>
+
+<!-- Exam.js -->
+
+<script>
+  let attemptsLoadedExl = false;
+  let leaderboardLoadedExl = false;
+
+  function switchTabExl(tabNameExl) {
+    document.querySelectorAll('.inner-tab-content').forEach(c => c.classList.add('hidden'));
+
+    const inactive = 'px-6 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-50';
+    document.getElementById('pill-leaderboardExl').className = inactive;
+    document.getElementById('pill-attemptsExl').className = inactive;
+
+    const active = 'px-8 py-3 rounded-full font-semibold text-sm sm:text-base flex items-center gap-2 transition-all bg-accent text-white';
+
+    if (tabNameExl === 'leaderboard') {
+        document.getElementById('leaderboardTabExl').classList.remove('hidden');
+        document.getElementById('pill-leaderboardExl').className = active;
+
+        // Always show skeleton briefly for smooth UX
+        document.getElementById('leaderboardLoadingExl').classList.remove('hidden');
+        document.getElementById('leaderboardContainerExl').classList.add('hidden');
+        document.getElementById('leaderboardEmptyExl').classList.add('hidden');
+
+        const selectExl = document.getElementById('examSelectExl');
+
+        // If exams already loaded → auto-select first (or keep current) and load leaderboard
+        if (selectExl.children.length > 1) {  // means options exist beyond placeholder
+            if (selectExl.selectedIndex === 0) {
+                selectExl.selectedIndex = 1; // auto-pick first real exam
+            }
+            fetchLeaderboardExl(); // this will instantly replace skeleton with data
+        } else if (!leaderboardLoadedExl) {
+            // First time → fetch exam list (which auto-selects first)
+            fetchExamListExl();
+            leaderboardLoadedExl = true;
+        }
+        // else: still loading exam list → skeleton stays until fetchExamListExl() finishes
+
+    } else if (tabNameExl === 'attempts') {
+        document.getElementById('attemptsTabExl').classList.remove('hidden');
+        document.getElementById('pill-attemptsExl').className = active;
+
+        document.getElementById('attemptsLoadingExl').classList.remove('hidden');
+        document.getElementById('attemptsContainerExl').classList.add('hidden');
+        document.getElementById('attemptsEmptyExl').classList.add('hidden');
+
+        if (!attemptsLoadedExl) {
+            fetchStudentAttemptsExl();
+            attemptsLoadedExl = true;
+        } else {
+            // Already loaded → instantly show data (no skeleton flash needed)
+            document.getElementById('attemptsLoadingExl').classList.add('hidden');
+            if (document.getElementById('attemptsContainerExl').children.length > 0) {
+                document.getElementById('attemptsContainerExl').classList.remove('hidden');
+            } else {
+                document.getElementById('attemptsEmptyExl').classList.remove('hidden');
+            }
+        }
+    }
+}
+  async function fetchExamListExl() {
+    try {
+        const response = await fetch(`/api/student/exam-list`);
+        const data = await response.json();
+        const selectExl = document.getElementById('examSelectExl');
+        
+        // Clear and populate
+        selectExl.innerHTML = '<option value="">Select an Exam</option>';
+        
+        if (data.length === 0) {
+            // No exams at all
+            document.getElementById('leaderboardLoadingExl')?.classList.add('hidden');
+            document.getElementById('leaderboardEmptyExl')?.classList.remove('hidden');
+            return;
+        }
+
+        data.forEach(exam => {
+            const optionExl = document.createElement('option');
+            optionExl.value = exam.id;
+            optionExl.textContent = exam.name;
+            selectExl.appendChild(optionExl);
+        });
+
+
+        selectExl.selectedIndex = 1; 
+        selectExl.dispatchEvent(new Event('change')); 
+
+    } catch (error) {
+        console.error('Error fetching exam list Exl:', error);
+        document.getElementById('leaderboardLoadingExl')?.classList.add('hidden');
+        document.getElementById('leaderboardEmptyExl')?.classList.remove('hidden');
+    }
+}
+
+  async function fetchLeaderboardExl() {
+    const examId = document.getElementById('examSelectExl').value;
+    const loading = document.getElementById('leaderboardLoadingExl');
+    const container = document.getElementById('leaderboardContainerExl');
+    const empty = document.getElementById('leaderboardEmptyExl');
+    const yourScore = document.getElementById('yourScoreExl');
+    const body = document.getElementById('leaderboardBodyExl');
+
+    if (!examId) {
+      loading.classList.add('hidden');
+      empty.classList.remove('hidden');
+      container.classList.add('hidden');
+      return;
+    }
+
+    loading.classList.remove('hidden');
+    container.classList.add('hidden');
+    empty.classList.add('hidden');
+
+    try {
+      const response = await fetch(`/api/student/exam/${examId}/leaderboard`);
+      const data = await response.json();
+
+      loading.classList.add('hidden');
+
+      if (!data.leaderboard || data.leaderboard.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+
+      yourScore.innerHTML = data.your_score
+        ? `<h3 class="font-semibold text-accent">Your Score:</h3><p class="text-lg">${data.your_score.username}: <strong>${data.your_score.score}</strong></p>`
+        : `<p class="text-gray-500 italic">You haven't attempted this exam yet.</p>`;
+
+      body.innerHTML = '';
+      data.leaderboard.forEach((entry, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${i + 1}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">${entry.username}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">${entry.roll_number || '-'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">${entry.score}</td>
+        `;
+        body.appendChild(row);
+      });
+    } catch (err) {
+      loading.classList.add('hidden');
+      empty.classList.remove('hidden');
+      empty.querySelector('p').textContent = 'Failed to load leaderboard.';
+    }
+  }
+
+  async function fetchStudentAttemptsExl() {
+    const loading = document.getElementById('attemptsLoadingExl');
+    const container = document.getElementById('attemptsContainerExl');
+    const empty = document.getElementById('attemptsEmptyExl');
+
+    loading.classList.remove('hidden');
+    container.classList.add('hidden');
+    empty.classList.add('hidden');
+    container.innerHTML = '';
+
+    try {
+      const response = await fetch(`/api/student/attempts`);
+      const data = await response.json();
+
+      loading.classList.add('hidden');
+
+      if (!data.attempts || data.attempts.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+
+      data.attempts.forEach(attempt => {
+        const card = document.createElement('div');
+        card.className = 'border border-gray-200 rounded-lg p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md transition-shadow';
+        card.innerHTML = `
+          <div class="flex-1">
+            <h3 class="font-bold text-lg text-accent">${attempt.exam_name} - ${attempt.subject}</h3>
+            <p class="text-sm text-gray-600 mt-1">Status: <span class="font-medium">${attempt.status}</span></p>
+            <p class="text-sm text-gray-600">Score: <strong>${attempt.score ?? 'Pending'}</strong></p>
+            <p class="text-sm text-gray-600">Started: ${new Date(attempt.start_time).toLocaleString()}</p>
+          </div>
+          <div class="mt-4 sm:mt-0 flex items-center gap-3">
+            <span class="text-sm text-gray-700">Public Score:</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" ${attempt.is_score_public ? 'checked' : ''} 
+                     onchange="togglePrivacyExl(${attempt.id}, this)" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"></div>
+            </label>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      loading.classList.add('hidden');
+      empty.classList.remove('hidden');
+      empty.querySelector('p').textContent = 'Failed to load attempts';
+    }
+  }
+  async function togglePrivacyExl(attemptIdExl, checkboxExl) {
+      const isPublicExl = checkboxExl.checked;
+      try {
+          const formDataExl = new FormData();
+          formDataExl.append('attempt_id', attemptIdExl);
+          formDataExl.append('is_public', isPublicExl.toString());
+
+          const response = await fetch('/student/toggle-score-privacy', {
+              method: 'POST',
+              body: formDataExl
+          });
+
+          if (response.ok) {
+              if (!document.getElementById('attemptsTabExl').classList.contains('hidden')) {
+                  fetchStudentAttemptsExl();
+              }
+          } else {
+              alert('Error updating privacy');
+              checkboxExl.checked = !isPublicExl;
+          }
+      } catch (error) {
+          console.error('Error toggling privacy Exl:', error);
+          alert('Error updating privacy');
+          checkboxExl.checked = !isPublicExl;
+      }
+  }
+</script>
+</body>
+</html>

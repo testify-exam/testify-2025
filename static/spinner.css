@@ -1,0 +1,42 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    backdrop-filter: blur(4px);
+}
+
+.nips-container {  
+    position: fixed;
+    display: none;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    width: 60px;
+    height: 60px;
+  }
+
+  .nips {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+    border: 5px solid rgba(204, 204, 204, 0.849);
+    border-radius: 50%;
+    border-top-color: #6b56dfd2;
+    animation: spin .5s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

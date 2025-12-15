@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Exam Interface</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+          colors: {
+            gray: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+  <style>
+
+    .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+
+    .spinner-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e4e4e7;
+      border-top-color: #18181b; 
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .popup-box {
+      border-radius: 16px !important;
+      border: 1px solid #e4e4e7 !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .popup-btn-primary {
+      background-color: #18181b !important;
+      border-radius: 8px !important;
+    }
+  </style>
+
+  <script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.pushState(null, null, location.href);
+    };
+    let examSubmitted = false;
+    let remainingTime = {{ exam_duration }};
+    
+    async function submitExam() {
+        if (examSubmitted) { clearInterval(alertCountdown); return; }
+        showLoading();
+        if (examSubmitted) return;
+        examSubmitted = true;
+        disableNavigation();
+
+        const form = document.getElementById("examForm");
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+          keepalive: true
+        }).catch(error => {
+          console.error("Error submitting exam:", error);
+        });
+
+        window.location.href = "/student/home";
+    }
+    
+    function disableNavigation() {
+      document.getElementById("btn-next").disabled = true;
+      document.getElementById("btn-prev").disabled = true;
+      document.getElementById("btn-next").classList.add("opacity-50", "cursor-not-allowed");
+      document.getElementById("btn-prev").classList.add("opacity-50", "cursor-not-allowed");
+    }
+    
+    function startTimer() {
+      let timerDisplay = document.getElementById("timer");
+      let interval = setInterval(function() {
+        let minutes = Math.floor(remainingTime / 60);
+        let seconds = remainingTime % 60;
+        // Pad with leading zeros for standard timer look
+        let formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+        let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        timerDisplay.textContent = formattedMinutes + ":" + formattedSeconds;
+        
+        // Critical time warning styling
+        if (remainingTime < 60) {
+            timerDisplay.classList.add('text-red-600'); 
+            timerDisplay.classList.remove('text-gray-900');
+        }
+
+        remainingTime--;
+        if (remainingTime < 0) {
+          clearInterval(interval);
+          showLoading();
+          showAlert('Time up', 'Exam time is over..');
+        }
+      }, 1000);
+    }
+
+    // --- Cheating Detection ---
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        showAlert('System Detected Cheating', 'Tab switching detected. Your exam has been submitted.');  
+      }
+    });
+
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement) {
+        showAlert('System Detected Cheating', 'Fullscreen mode exited. Your exam has been submitted.');
+        submitExam();
+      }
+    });
+
+    window.addEventListener("blur", function () {
+      setTimeout(() => {
+        if (document.hidden) {
+          showAlert('System Detected Cheating', 'App switching detected. Your exam has been submitted.');  
+        }
+      }, 100);
+    });
+
+    function goFullScreen() {
+      let elem = document.documentElement;
+      if (elem.requestFullscreen) { elem.requestFullscreen(); }
+      else if (elem.mozRequestFullScreen) { elem.mozRequestFullScreen(); }
+      else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+      else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+    }
+    
+    // --- Navigation Logic ---
+    function initQuestionNavigation() {
+      const questions = document.querySelectorAll(".question-container");
+      let currentQuestion = 0;
+      
+      questions.forEach((q, index) => {
+        // Use Tailwind utility for hiding/showing
+        if (index === 0) {
+            q.classList.remove('hidden');
+            q.classList.add('block');
+        } else {
+            q.classList.add('hidden');
+            q.classList.remove('block');
+        }
+      });
+      
+      updateNavigation();
+      
+      document.getElementById("btn-next").addEventListener("click", function(e) {
+        e.preventDefault();
+        if (examSubmitted) return;
+        if (currentQuestion < questions.length - 1) {
+          questions[currentQuestion].classList.add("hidden");
+          questions[currentQuestion].classList.remove("block");
+          currentQuestion++;
+          questions[currentQuestion].classList.remove("hidden");
+          questions[currentQuestion].classList.add("block");
+          
+          // Scroll to top of card on mobile
+          window.scrollTo({top: 0, behavior: 'smooth'});
+          updateNavigation();
+        } else {
+          showLoading();
+          submitExam();
+        }
+      });
+      
+      document.getElementById("btn-prev").addEventListener("click", function(e) {
+        e.preventDefault();
+        if (examSubmitted) return;
+        if (currentQuestion > 0) {
+          questions[currentQuestion].classList.add("hidden");
+          questions[currentQuestion].classList.remove("block");
+          currentQuestion--;
+          questions[currentQuestion].classList.remove("hidden");
+          questions[currentQuestion].classList.add("block");
+          
+          window.scrollTo({top: 0, behavior: 'smooth'});
+          updateNavigation();
+        }
+      });
+      
+      function updateNavigation() {
+        // Update Text Counter
+        document.getElementById("question-current").textContent = (currentQuestion + 1);
+        document.getElementById("question-total").textContent = questions.length;
+        
+        // Button States
+        const prevBtn = document.getElementById("btn-prev");
+        const nextBtn = document.getElementById("btn-next");
+        
+        prevBtn.disabled = (currentQuestion === 0);
+        if(currentQuestion === 0) {
+            prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        if (currentQuestion === questions.length - 1) {
+          nextBtn.innerHTML = "Submit Exam <span class='ml-2'>&rarr;</span>";
+          nextBtn.classList.add('bg-gray-900', 'text-white'); // Ensure primary style
+        } else {
+          nextBtn.innerHTML = "Next <span class='ml-2'>&rarr;</span>";
+        }
+        
+        // Progress Bar
+        let progressBar = document.getElementById("progress-fill");
+        let progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        progressBar.style.width = progressPercent + "%";
+      }
+    }
+    
+    // --- Markdown Formatting ---
+    function formatQuestionText(text) {
+      if (!text) return text;
+      const tempDiv = document.createElement('div');
+      tempDiv.textContent = text;
+      let content = tempDiv.textContent;
+      
+      content = content
+        .replace(/```([^`]+)```/g, '<div class="my-4 rounded-lg overflow-hidden border border-gray-200"><div class="bg-gray-100 px-4 py-1 text-xs text-gray-500 uppercase font-mono tracking-wider">Code</div><pre class="bg-gray-50 p-4 overflow-x-auto custom-scrollbar text-sm font-mono text-gray-800"><code>$1</code></pre></div>')
+        .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong class="font-bold text-black">$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em class="italic text-gray-700">$1</em>')
+        .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-black border border-gray-200">$1</code>');
+      
+      return content;
+    }
+
+    function formatAllQuestions() {
+      const questionTexts = Array.from(document.querySelectorAll('.question-text-content'));
+      const unprocessed = questionTexts.filter(el => !el.hasAttribute('data-formatted'));
+      
+      if (unprocessed.length === 0) return;
+      
+      requestAnimationFrame(() => {
+        const batch = unprocessed.slice(0, 5);
+        batch.forEach(container => {
+           const originalText = container.textContent;
+           const formattedText = formatQuestionText(originalText);
+           container.innerHTML = formattedText;
+           container.setAttribute('data-formatted', 'true');
+        });
+        
+        if (unprocessed.length > 5) {
+          setTimeout(formatAllQuestions, 0);
+        }
+      });
+    }
+
+    window.onload = function() {
+      goFullScreen();
+      startTimer();
+      initQuestionNavigation();
+      // Delay markdown formatting slightly to ensure render
+      setTimeout(formatAllQuestions, 50);
+    };
+
+    function showLoading() {
+        const overlay = document.querySelector(".spinner-overlay");
+        overlay.style.opacity = "1";
+        overlay.style.visibility = "visible";
+    }
+
+    window.addEventListener('beforeunload', function() {
+        showLoading();
+    });
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen selection:bg-gray-200">
+
+  <!-- Loading Overlay -->
+  <div class="spinner-overlay">
+    <div class="flex flex-col items-center gap-4">
+        <div class="spinner"></div>
+        <div class="text-sm font-medium text-gray-600 animate-pulse">Processing...</div>
+    </div>
+  </div>
+
+  <div id="alertOverlay" class="overlay" style="display:none; position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); align-items: center; justify-content: center;">
+    <div class="popup-box bg-white p-6 max-w-sm w-full mx-4 shadow-2xl rounded-2xl border border-gray-100">
+        <div class="flex flex-col items-center text-center">
+            <div class="mb-4 p-3 bg-gray-100 rounded-full">
+                <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2" id="alertTitle">Information</h3>
+            <p class="text-gray-600 mb-6 text-sm leading-relaxed" id="alertMessage"></p>
+            <button class="w-full bg-black text-white py-3 px-4 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" disabled style="opacity: 0.6; cursor: not-allowed;" onclick="document.getElementById('alertOverlay').style.display='none'">
+                Understood
+            </button>
+        </div>
+    </div>
+  </div>
+
+  <!-- Header: Sticky & Minimal -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 supports-[backdrop-filter]:bg-white/60">
+    <div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+        
+        <!-- Timer Widget -->
+        <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span id="timer" class="font-mono font-medium text-lg text-gray-900 tracking-tight">--:--</span>
+        </div>
+
+        <!-- Question Counter -->
+        <div class="text-sm font-medium text-gray-500">
+            <span id="question-current" class="text-black font-bold">1</span>
+            <span class="mx-1 text-gray-300">/</span>
+            <span id="question-total">{{ question_data|length }}</span>
+        </div>
+    </div>
+    
+    <!-- Progress Bar (attached to header) -->
+    <div class="w-full h-1 bg-gray-100">
+        <div id="progress-fill" class="h-full bg-black transition-all duration-500 ease-out w-0"></div>
+    </div>
+  </header>
+
+  <!-- Main Exam Content -->
+  <main class="flex-grow flex flex-col items-center justify-start pt-6 pb-32 px-4 md:px-0">
+    <div class="w-full max-w-2xl">
+      
+      <!-- Exam Title -->
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 px-2 text-center tracking-tight">{{ exam.name }}</h1>
+
+      <form id="examForm" method="post" action="/student/exam/{{ exam.id }}" class="relative w-full">
+        
+        {% for q in question_data %}
+        <!-- Single Question Card -->
+        <div class="question-container hidden w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+            
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                
+                <!-- Question Header/Text -->
+                <div class="p-4 md:p-8 border-b border-gray-100">
+                    <div class="flex items-center flex-col gap-4">
+                        <div class="w-full" >
+                        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-sm font-bold mt-0.5">
+                            {{ loop.index }}
+                        </span>
+                        </div>
+                        <div class="question-text-content w-full text-base md:text-lg leading-relaxed text-gray-800 font-medium">
+                            {{ q.question.question_text }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="p-4 md:p-6 bg-gray-50/50">
+                    <div class="space-y-3">
+                        {% for opt in q.options %}
+                        <div class="relative group">
+                            <input type="radio" 
+                                   id="opt_{{ opt.id }}" 
+                                   name="q_{{ q.question.id }}" 
+                                   value="{{ opt.id }}" 
+                                   class="peer sr-only" 
+                                   required>
+                            
+                            <label for="opt_{{ opt.id }}" 
+                                   class="flex items-center p-4 rounded-xl border-2 border-white bg-white shadow-sm cursor-pointer transition-all duration-200
+                                          group-hover:border-gray-200 group-hover:bg-gray-50
+                                          peer-checked:border-black peer-checked:bg-white peer-checked:ring-1 peer-checked:ring-black peer-checked:shadow-md">
+                                
+                                <!-- Custom Radio Circle -->
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 mr-4 flex items-center justify-center flex-shrink-0 peer-checked:border-black transition-colors">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-black opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                </div>
+                                
+                                <!-- Option Text -->
+                                <span class="text-gray-700 font-medium peer-checked:text-black select-none">
+                                    {{ opt.option_text }}
+                                </span>
+                            </label>
+                            
+                            <!-- Active/Checked Indicator (Subtle background effect) -->
+                            <div class="absolute inset-0 border-2 border-transparent rounded-xl pointer-events-none peer-checked:border-black transition-all"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Navigation Footer (Fixed Bottom on Mobile for easy thumb access) -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-20 pb-safe md:relative md:bg-transparent md:border-t-0 md:p-0 md:pb-10">
+    <div class="max-w-2xl mx-auto flex items-center justify-between gap-4">
+        
+        <button id="btn-prev" class="flex-1 md:flex-none px-6 py-3.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 hover:text-black active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+            Previous
+        </button>
+
+        <button id="btn-next" class="flex-[2] md:flex-none md:min-w-[140px] px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-black hover:bg-gray-800 active:scale-[0.98] transition-all shadow-lg shadow-gray-200/50 flex items-center justify-center">
+            Next <span class="ml-2">&rarr;</span>
+        </button>
+        
+    </div>
+  </nav>
+
+  <script>
+    let alertLocked = false;
+    let alertCountdown;
+
+  function showAlert(title, message) {
+    if (alertLocked) return;
+    alertLocked = true;
+
+    document.getElementById('alertTitle').innerText = title;
+    document.getElementById('alertMessage').innerText = message;
+    document.getElementById('alertOverlay').style.display = 'flex';
+
+    const closeBtn = document.querySelector('#alertOverlay button');
+
+    let seconds = 4;
+    closeBtn.innerHTML = `Redirecting in <span id="countdown">4</span>s`;
+    closeBtn.disabled = true;
+
+    alertCountdown = setInterval(() => {
+      seconds--;
+      document.getElementById('countdown').textContent = seconds;
+
+      if (seconds <= 0) {
+        clearInterval(alertCountdown);
+        document.getElementById('alertOverlay').style.display = 'none';
+        alertLocked = false;
+        submitExam();  
+      }
+    }, 1000);
+  }
+    
+    function closeAlert() {
+        document.getElementById('alertOverlay').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>

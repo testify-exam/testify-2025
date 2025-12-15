@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Feedback</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --light-gray: #f5f5f5;
+      --border-color: #e0e0e0;
+      --text-primary: #202124;
+      --text-secondary: #5f6368;
+      --green: #0cce6b;
+    }
+    button, a {
+          -webkit-tap-highlight-color: transparent;  
+          outline: none; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      background-color: var(--light-gray);
+      color: var(--text-primary);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+    header {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+    .filter-button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .filter-button:hover {
+      background-color: var(--secondary-color);
+    }
+    .review-item {
+      background-color: white;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      font-size: 13px;
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      margin-right: 8px;
+      font-size: 12px;
+    }
+    .user-info {
+      flex-grow: 1;
+    }
+    .username {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+    .user-id {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .rating-date {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .stars {
+      color: #ffa800;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .review-date {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .review-content {
+      font-size: 13px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .admin-reply {
+      background-color: #f8f9fa;
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--primary-color);
+      font-size: 12px;
+    }
+    .reply-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .reply-icon {
+      color: var(--primary-color);
+      margin-right: 4px;
+      font-size: 12px;
+    }
+    .reply-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .reply-content {
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+    .reply-form {
+      margin-top: 8px;
+    }
+    .reply-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 12px;
+      resize: vertical;
+      min-height: 60px;
+      margin-bottom: 8px;
+    }
+    .reply-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    .reply-button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .reply-button:hover {
+      background-color: var(--secondary-color);
+    }
+    .no-reply {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #323232;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 12px;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .filter-spinner {
+    position: relative;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    border: 3px solid rgba(67, 97, 238, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    opacity: 0;
+    visibility: hidden;
+    animation: spin 0.8s linear infinite;
+    transition: opacity 0.3s, visibility 0.3s;
+    pointer-events: none;
+    margin-right: 9px;
+    margin-top: 15px;
+}
+
+        #filterForm.filtering .filter-spinner {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translateY(-50%) rotate(360deg);
+            }
+        }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      .container {
+        padding: 8px;
+      }
+      .review-item {
+        padding: 10px;
+      }
+      .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+      }
+    }
+    h2, h3 {
+    color: var(--primary-color);
+    margin-bottom: 0;
+    font-size: 20px;
+}
+.filter-container {
+    display: flex
+;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+  </style>
+</head>
+<body>
+  <div class="container" id="filterForm">
+    <header>
+      <div style="padding-bottom: 9px; border-bottom: 1px solid rgb(59, 59, 59); display: flex;justify-content: space-between;align-items: center; margin-bottom: 10px;"><h2>Manage Reviews</h2><a href="/" style="text-decoration: none;
+        color: white;background-color: #4361ee;padding: 3px 9px 2px 4px;border-radius: 20px;display: flex;align-items: center;" ><svg width="28px" height="28px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 12L8 12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M11 8L7 12L11 16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>Back</a></div>
+      <div class="filter-container">
+       <div><font style="padding-right: 6px;">VEIW:</font><button id="filterToggle" class="filter-button">Not Replied Only</button></div>
+       <div class="filter-spinner"></div>
+      </div>
+      
+    </header>
+
+    <div id="feedbackList">
+      <!-- Feedback items will be loaded here -->
+      
+    </div>
+  </div>
+
+  <script>
+    let allFeedback = [];
+    let filterNotReplied = false;
+
+    function getInitials(name) {
+      return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase();
+    }
+    
+    function displayStars(rating) {
+      let stars = '';
+      for (let i = 0; i < Math.floor(rating); i++) {
+        stars += '<i class="fas fa-star"></i>';
+      }
+      if (rating % 1 >= 0.5) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+      }
+      const emptyStars = 5 - Math.ceil(rating);
+      for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
+      }
+      return stars;
+    }
+
+    function formatDate(dateString) {
+      const dateObj = new Date(dateString);
+      return dateObj.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+
+    function renderFeedback(data) {
+      const feedbackList = document.getElementById('feedbackList');
+      if (data.length === 0) {
+        feedbackList.innerHTML = '<p class="no-feedback">No reviews available at this time.</p>';
+        return;
+      }
+
+      feedbackList.innerHTML = data.map(f => {
+        const dateString = formatDate(f.created_at);
+        return `
+          <div class="review-item">
+            <div class="review-header">
+              <div class="user-avatar">${getInitials(f.users.username)}</div>
+              <div class="user-info">
+                <div class="username">${f.users.username}</div>
+                <div class="user-id">ID: ${f.users.id}</div>
+              </div>
+            </div>
+            <div class="rating-date">
+              <div class="stars">${displayStars(f.rating)}</div>
+              <div class="review-date">${dateString}</div>
+            </div>
+            <div class="review-content">
+              ${f.message}
+            </div>
+            ${f.feedback_replies && f.feedback_replies.length > 0 ? 
+              `<div class="admin-reply">
+                <div class="reply-header">
+                  <i class="fas fa-reply reply-icon"></i>
+                  <div class="reply-title">Admin</div>
+                </div>
+                <div class="reply-content">
+                  ${f.feedback_replies[0].reply_message}
+                </div>
+              </div>` : 
+              `<div class="no-reply">No response yet</div>
+               <div class="reply-form">
+                 <textarea id="reply-${f.id}" class="reply-input" placeholder="Write your response here..."></textarea>
+                 <button class="reply-button" onclick="sendReply(${f.id})">Respond</button>
+               </div>`
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadFeedback() {
+  try {
+    showloading(); // Show loading indicator when starting to fetch data
+    const response = await fetch('/api/feedback/admin/');
+    const data = await response.json();
+    allFeedback = data.feedback;
+    applyFilter();
+  } catch (error) {
+    console.error('Error loading feedback:', error);
+    document.getElementById('feedbackList').innerHTML = '<p>Error loading reviews. Please try again later.</p>';
+  } finally {
+    hideLoading(); // Hide loading indicator regardless of success or failure
+  }
+}
+
+    function applyFilter() {
+      let filteredFeedback = allFeedback;
+      if (filterNotReplied) {
+        filteredFeedback = allFeedback.filter(f => !f.feedback_replies || f.feedback_replies.length === 0);
+      }
+      renderFeedback(filteredFeedback);
+    }
+
+    document.getElementById('filterToggle').addEventListener('click', function() {
+      filterNotReplied = !filterNotReplied;
+      this.textContent = filterNotReplied ? 'All Reviews' : 'Not Replied';
+      applyFilter();
+    });
+
+    async function sendReply(feedbackId) {
+      const replyMessage = document.getElementById(`reply-${feedbackId}`).value.trim();
+      if (!replyMessage) {
+        showToast('Please enter a response message');
+        return;
+      }
+      try {
+        const response = await fetch('/api/feedback/reply/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            feedback_id: feedbackId, 
+            admin_id: 1, 
+            reply_message: replyMessage 
+          })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          showToast(result.message || 'Response sent successfully');
+          loadFeedback();
+        } else {
+          showToast(result.message || 'Error sending response');
+        }
+      } catch (error) {
+        console.error('Error sending reply:', error);
+        showToast('Error sending response. Please try again.');
+      }
+    }
+    function showloading(){
+      document.getElementById('filterForm').classList.add('filtering');
+    }
+    function hideLoading(){
+      document.getElementById('filterForm').classList.remove('filtering');
+    }
+    showloading()
+    
+    function showToast(message) {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    window.addEventListener('beforeunload', function() {
+          showloading();
+        });
+
+    window.onload = loadFeedback;
+  </script>
+</body>
+</html>

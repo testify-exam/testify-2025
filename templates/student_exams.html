@@ -1,0 +1,366 @@
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9fafc;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e6ff;
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #4a56e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .home-link:hover {
+            background-color: #3a46c2;
+            transform: translateY(-2px);
+        }
+        
+        .home-link i {
+            margin-right: 6px;
+        }
+        
+        /* Exam Section */
+        .exams {
+            padding: 40px 30px;
+            background-color: #f0f3ff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(74, 86, 226, 0.08);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #2d3748;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #4a56e2;
+            border-radius: 2px;
+        }
+
+        .exam-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .exam-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(74, 86, 226, 0.15);
+        }
+
+        .exam-image {
+            height: 160px;
+            background: linear-gradient(135deg, #4a56e2, #5e6ad2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .exam-image::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .exam-image::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .exam-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .exam-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2d3748;
+        }
+
+        .exam-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 15px;
+            color: #4a5568;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-item i {
+            margin-right: 6px;
+            color: #4a56e2;
+        }
+
+        .exam-tags {
+            margin-bottom: 20px;
+        }
+        
+        .exam-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #e6e9ff;
+            color: #4a56e2;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .exam-action {
+            margin-top: auto;
+        }
+        
+        .exam-action em {
+            display: block;
+            margin-bottom: 10px;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .view-results {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4a56e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .view-results:hover {
+            background-color: #3a46c2;
+            transform: translateY(-2px);
+        }
+        
+        .start-exam {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 24px;
+            background-color: #4a56e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .start-exam:hover {
+            background-color: #3a46c2;
+            transform: translateY(-2px);
+        }
+        
+        /* Responsive styles - The key part that was missing */
+        @media (max-width: 1024px) {
+            .exam-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+
+            .page-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        position: fixed;
+        top: 0px;
+        padding: 010px;
+        width: 100%;
+        background-color: inherit;
+        height: 79px;
+        z-index: 200;
+    }
+            
+            .exams {
+                padding: 100px 20px;
+            }
+            
+            .exam-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .exam-image {
+                height: 140px;
+                font-size: 20px;
+            }
+            
+            .exam-content {
+                padding: 20px;
+            }
+            
+            .exam-title {
+                font-size: 18px;
+            }
+            
+            .exam-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+ <section class="exams">
+        <div class="container">
+            <h2 class="section-title">Choose Your Exam</h2>
+            <div class="exam-cards">
+                {% for exam in exams %}
+                <div class="exam-card">
+                    <div class="exam-image">
+                        {{ exam.name }}
+                    </div>
+                    <div class="exam-content">
+                        <h3 class="exam-title">{{ exam.subject }}</h3>
+                        <div class="exam-details">
+                            <span class="detail-item">
+                                <i class="fas fa-clock"></i> Duration: 
+                                {{ exam.duration if exam.duration is defined else '3' }} mins
+                            </span>
+                            <span class="detail-item">
+                                <i class="fas fa-question-circle"></i> Questions: 
+                                {{ exam.question_count if exam.question_count is defined else '40' }}
+                            </span>
+                        </div>
+                        <div class="exam-tags">
+                            <span class="exam-tag">
+                                <i class="fas fa-calendar-alt"></i> {{ exam.start_time }}
+                            </span>
+                        </div>
+                        <div class="exam-action">
+                            {% set attempt = exam_attempts[exam.id] %}
+                            {% if attempt %}
+                                <em>Exam already attempted.</em>
+                                <a class="view-results" href="/student/exam/{{ exam.id }}/results">View Results</a>
+                            {% else %}
+                                {% if now.strftime("%Y-%m-%dT%H:%M") < exam.start_time %}
+                                    <em>Exam not started yet.</em>
+                                {% elif now.strftime("%Y-%m-%dT%H:%M") > exam.end_time %}
+                                    <em>Exam time is over.</em>
+                                {% else %}
+                                    <form method="get" action="/student/exam/{{ exam.id }}">
+                                        <button class="start-exam" type="submit">Start Examination</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>    
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const examElement = document.querySelector(".exam-tag");
+    if (examElement) {
+        let dateTimeStr = examElement.textContent.trim(); // Extract the date string
+        let examDate = new Date(dateTimeStr); // Convert to Date object
+
+        let now = new Date();
+        let today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        let tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        let formattedTime = examDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        if (examDate.toDateString() === today.toDateString()) {
+            examElement.innerHTML = `<i class="fas fa-calendar-alt"></i> Today at ${formattedTime}`;
+        } else if (examDate.toDateString() === tomorrow.toDateString()) {
+            examElement.innerHTML = `<i class="fas fa-calendar-alt"></i> Tomorrow at ${formattedTime}`;
+        } else {
+            let formattedDate = examDate.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+            examElement.innerHTML = `<i class="fas fa-calendar-alt"></i> ${formattedDate} at ${formattedTime}`;
+        }
+    }
+});
+</script>

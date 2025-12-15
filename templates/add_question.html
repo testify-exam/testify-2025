@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Question</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/addqes.css" />
+  <script src="https://1e7c25b5.testify-9ph.pages.dev/addqes.js"></script>
+  <script src="https://1e7c25b5.testify-9ph.pages.dev/notify.js"></script>
+  <style>
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #7b75ff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Alert overlay -->
+  <div id="alertOverlay" class="overlay">
+    <div class="popup-box">
+      <div class="popup-icon alert-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11v4m0-8v.01"/>
+        </svg>
+      </div>
+      <div class="popup-title" id="alertTitle">Information</div>
+      <div class="popup-message" id="alertMessage"></div>
+      <div class="popup-buttons">
+        <button class="popup-btn popup-btn-primary" onclick="closeAlert()">OK</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading overlay with spinner -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner" id="spinner"></div>
+  </div>
+  
+  <div class="container">
+    <h1>Add a Question to Exam ID: {{ exam_id }}</h1>
+    
+    {% if message %}
+      <div class="success-message">{{ message }}</div>
+    {% endif %}
+    
+    <form id="addForm" method="post" action="/teacher/add_question/{{ exam_id }}">
+      <div class="form-group">
+        <label>Question Text:</label>
+        <div class="editor-container" style="position: relative;">
+          <textarea id="questionText" name="question_text" rows="3" cols="50" required></textarea>
+          <div id="editorToolbar" class="editor-toolbar">
+            <button type="button" class="editor-button" data-format="bold" title="Bold">
+              <i class="fas fa-bold"></i>
+            </button>
+            <button type="button" class="editor-button" data-format="italic" title="Italic">
+              <i class="fas fa-italic"></i>
+            </button>
+            <button type="button" class="editor-button" data-format="code" title="Code">
+              <i class="fas fa-code"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="option-group">
+        <div class="option-group-check">
+          <div><label>Option 1:</label></div>
+          <div class="radio-option">
+            <label>Mark as correct</label>
+            <input type="radio" name="correct_option" id="option1" value="1" required />
+          </div>
+        </div>
+        <input type="text" name="option1" required />
+      </div>
+      
+      <div class="option-group">
+        <div class="option-group-check">
+          <div><label>Option 2:</label></div>
+          <div class="radio-option">
+            <label>Mark as correct</label>
+            <input type="radio" name="correct_option" id="option2" value="2" required />
+          </div>
+        </div>
+        <input type="text" name="option2" required />
+      </div>
+      
+      <div class="option-group">
+        <div class="option-group-check">
+          <div><label>Option 3:</label></div>
+          <div class="radio-option">
+            <label>Mark as correct</label>
+            <input type="radio" name="correct_option" id="option3" value="3" required />
+          </div>
+        </div>
+        <input type="text" name="option3" required />
+      </div>
+
+      <div class="option-group">
+        <div class="option-group-check">
+          <div><label>Option 4:</label></div>
+          <div class="radio-option">
+            <label>Mark as correct</label>
+            <input type="radio" name="correct_option" id="option4" value="4" required />
+          </div>
+        </div>
+        <input type="text" name="option4" required />
+      </div>
+      
+      <div class="submit-with-ai">
+        <a class="ai-button" onclick="showAlert('Notice', 'AI Generation is currently in development and will be available at a later date')">
+          <div class="ai-icon-container">
+            <svg style="rotate: 90deg;" width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#FFF" class="bi bi-stars">
+              <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L10.863.1z"/>
+            </svg>
+          </div>
+          <span class="ai-text">Generate AI</span>
+        </a>
+        <button class="submit-non" type="submit">Add Question</button>
+      </div>
+    </form>
+    
+    <div class="action-links">
+      <a id="finishLink" href="/">
+        <button class="submit-non" id="finishBtn" style="width: 100%; background-color: #7b75ff;">Finish</button>
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    // Functions for showing/hiding the loading overlay with a fade-out effect
+    function showLoading() {
+      var overlay = document.getElementById('loadingOverlay');
+      var spinner = document.getElementById('spinner');
+      overlay.style.display = 'flex';
+      overlay.style.opacity = '1';
+      spinner.style.display='flex';
+    }
+    
+    function hideLoading() {
+      var overlay = document.getElementById('loadingOverlay');
+      var spinner = document.getElementById('spinner');
+      overlay.style.opacity = '0';
+      setTimeout(function() {
+        overlay.style.display = 'none';
+        spinner.style.display='flex';
+      }, 500);
+    }
+
+    // Trigger loading animation on page load, then fade out when the page is fully loaded
+    showLoading();
+    window.addEventListener("load", function() {
+      hideLoading();
+    });
+
+    // Form submission: only show loading animation if form is valid
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+      if (!this.checkValidity()) {
+        e.preventDefault();
+        this.reportValidity();
+        return;
+      }
+      showLoading();
+      document.querySelector('button[type="submit"]').disabled = true;
+    });
+
+    // Finish button: show loading animation when clicked, then navigate
+    document.getElementById('finishLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showLoading();
+      document.getElementById('finishBtn').disabled = true;
+      window.location.href = this.href;
+    });
+  </script>
+</body>
+</html>

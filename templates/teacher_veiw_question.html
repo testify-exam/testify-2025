@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Questions - Exam {{ exam_id }}</title>
+</head>
+<body>
+    <h1>Questions for Exam {{ exam_id }}</h1>
+    {% if exam_questions %}
+      <ul>
+      {% for entry in exam_questions %}
+        <li>
+          <strong>{{ entry.question.question_text }}</strong>
+          <ul>
+            {% for option in entry.options %}
+              <li>
+                {{ option.option_text }} {% if option.is_correct %}(Correct Answer){% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>No questions added yet.</p>
+    {% endif %}
+    <a href="/teacher/exams">Back to My Exams</a>
+</body>
+</html>

@@ -1,0 +1,44 @@
+.refresh-button {
+    position: fixed;
+    bottom: 140px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4361ee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+
+  .refresh-button:hover {
+    opacity: 1;
+  }
+
+  .refresh-button svg {
+    width: 21px;
+    height: 21px;
+    fill: white;
+  }
+
+  /* Demo elements */
+  .demo-element {
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .refresh-button {
+      display: none;
+    }
+  }

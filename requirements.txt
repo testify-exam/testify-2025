@@ -1,0 +1,16 @@
+fastapi[all]
+uvicorn[standard]
+requests
+pytz
+httpcore
+python-dotenv
+itsdangerous
+jinja2
+python-multipart
+python-docx
+fpdf
+bcrypt
+uvloop
+httpx
+certifi
+urllib3

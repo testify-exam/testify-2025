@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Testify- Home</title>
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/refresh.css" />
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/settings.css" />
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/spinner.css" />
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/st-apr.css" />
+  <link rel="stylesheet" href="https://1e7c25b5.testify-9ph.pages.dev/tr_home.css" />
+<script src="https://1e7c25b5.testify-9ph.pages.dev/notify.js"></script>
+<script src="https://1e7c25b5.testify-9ph.pages.dev/refresh.js"></script>
+<script src="https://1e7c25b5.testify-9ph.pages.dev/settings.js"></script>
+<style>
+      .logout-button {
+    background-color: #4361ee;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 3px 18px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+    .logout-button:hover {
+      background-color: rgba(255, 0, 0, 0.699);
+    }
+    .promote-btn {
+    background-color: #50c150;
+    color: white;
+    padding: 4.6px 8px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.demote-btn {
+    background-color: #ee3b3b;
+    color: white;
+      padding: 4.6px 8px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+    align-items: center;
+  }
+
+  
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+  
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+  
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      margin-right: 8px;
+      font-size: 12px;
+    }
+    .user-avatar-div {
+  display: flex;
+  align-items: center;
+}
+      .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Popup box styles */
+        .popup-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 340px;
+            max-width: 90%;
+            text-align: center;
+            transform: translateY(30px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .overlay.active .popup-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        /* Icon styling */
+        .popup-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-icon {
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.4);
+        }
+
+        .confirm-icon {
+            background: linear-gradient(135deg, #FF9966, #FF5E62);
+            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+        }
+
+        .popup-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        /* Message styling */
+        .popup-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .popup-message {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Button styling */
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .popup-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            min-width: 100px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-btn-primary {
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            color: white;
+        }
+
+        .popup-btn-primary:hover {
+            background: linear-gradient(135deg, #2d62aa, #00b8e6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(58, 123, 213, 0.4);
+        }
+
+        .popup-btn-secondary {
+            background: linear-gradient(135deg, #FF9966, #FF5E62);
+            color: white;
+        }
+
+        .popup-btn-secondary:hover {
+            background: linear-gradient(135deg, #ff8c59, #ff4b4f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.4);
+        }
+        #download-icon{
+            position: fixed;
+            bottom: 130px;
+            right: 10px;
+            z-index: 1000;
+            cursor: pointer;
+            background: #667ef0;
+            border-radius: 22px;
+            padding: 9px;
+          }
+        @media (max-width: 768px) { 
+          #download-icon{
+            bottom: 90px;
+          }
+          
+        }
+
+</style>
+</head>
+<body>
+<div class="overlay"><div class="nips-container" style="display: block;"><div class="nips"></div></div></div>
+  <div class="refresh-button" id="refreshBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+    <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+  </svg>
+</div>  
+  <div id="alertOverlay" class="overlay">
+    <div class="popup-box">
+        <div class="popup-icon alert-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11v4m0-8v.01"/>
+            </svg>
+        </div>
+        <div class="popup-title" id="alertTitle">Information</div>
+        <div class="popup-message" id="alertMessage"></div>
+        <div class="popup-buttons">
+            <button class="popup-btn popup-btn-primary" onclick="closeAlert()">OK</button>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="notification-drawer-container">
+  <!-- Notification bell icon -->
+  <div id="notification-icon" style="position: fixed; bottom: 90px; left: 10px; z-index: 1000; cursor: pointer; color: white; background: #667ef0; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+    <span id="notification-count" style="position: absolute; top: -5px; right: -2px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: none; justify-content: center; align-items: center; font-weight: bold;"></span>
+  </div>
+
+  <!-- Notification drawer that slides up from bottom -->
+  <div id="notification-drawer" style="position: fixed; bottom: -400px; left: 0; right: 0; height: 400px; max-height: 80vh; background: white; z-index: 9999; transition: bottom 0.3s ease; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column;">
+    <!-- Draggable handle -->
+    <div id="drawer-handle" style="width: 100%; height: 30px; cursor: grab; display: flex; justify-content: center; align-items: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+      <div style="width: 40px; height: 5px; background: #ddd; border-radius: 10px;"></div>
+    </div>
+    
+    <!-- Notification header -->
+    <div style="padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="margin: 0; font-size: 18px;">Notifications</h3>
+      <button id="close-drawer" style="background: none; border: none; font-size: 26px; cursor: pointer; font-weight: 800; color: #333333; margin-top: -3px;">×</button>
+    </div>
+    
+    <!-- Scrollable notification content -->
+    <div id="notification-content" style="flex: 1; overflow-y: auto; padding: 0;">
+      <!-- Spinner element -->
+      <div id="spinner" style="display: none; text-align: center;padding: 20px; justify-content: center;">
+        <div class="spinner"></div>
+      </div>
+      <ul id="notification-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- Confirmation Overlay -->
+<div id="confirmOverlay" class="overlay">
+    <div class="popup-box">
+        <div class="popup-icon confirm-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6m2-6v6m-2-9v.01m2-.01v.01"/>
+            </svg>
+        </div>
+        <div class="popup-title" id="confirmTitle">Confirmation</div>
+        <div class="popup-message" id="confirmMessage"></div>
+        <div class="popup-buttons">
+            <button class="popup-btn popup-btn-primary" id="confirmOkBtn">Confirm</button>
+            <button class="popup-btn popup-btn-secondary" onclick="closeConfirm()">Cancel</button>
+        </div>
+    </div>
+</div>
+  <div class="dashboard-container">
+
+
+    <div class="students-details-section active" id="students-details-section active">
+
+      <div class="filter-container">
+        <label for="customDropdown"><svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="Interface / Filter">
+          <path id="Vector" d="M20 5.6001C20 5.04005 19.9996 4.75981 19.8906 4.5459C19.7948 4.35774 19.6423 4.20487 19.4542 4.10899C19.2403 4 18.9597 4 18.3996 4H5.59961C5.03956 4 4.75981 4 4.5459 4.10899C4.35774 4.20487 4.20487 4.35774 4.10899 4.5459C4 4.75981 4 5.04005 4 5.6001V6.33736C4 6.58195 4 6.70433 4.02763 6.81942C4.05213 6.92146 4.09263 7.01893 4.14746 7.1084C4.20928 7.20928 4.29591 7.29591 4.46875 7.46875L9.53149 12.5315C9.70443 12.7044 9.79044 12.7904 9.85228 12.8914C9.90711 12.9808 9.94816 13.0786 9.97266 13.1807C10 13.2946 10 13.4155 10 13.6552V18.411C10 19.2682 10 19.6971 10.1805 19.9552C10.3382 20.1806 10.5814 20.331 10.8535 20.3712C11.1651 20.4172 11.5487 20.2257 12.3154 19.8424L13.1154 19.4424C13.4365 19.2819 13.5966 19.2013 13.7139 19.0815C13.8176 18.9756 13.897 18.8485 13.9453 18.7084C14 18.5499 14 18.37 14 18.011V13.6626C14 13.418 14 13.2958 14.0276 13.1807C14.0521 13.0786 14.0926 12.9808 14.1475 12.8914C14.2089 12.7911 14.2947 12.7053 14.4653 12.5347L14.4688 12.5315L19.5315 7.46875C19.7044 7.2958 19.7904 7.20932 19.8523 7.1084C19.9071 7.01893 19.9482 6.92146 19.9727 6.81942C20 6.70551 20 6.58444 20 6.3448V5.6001Z" stroke="#4361ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          </svg> Filter by Department:</label>
+        <!-- Custom Dropdown Structure -->
+        <div class="custom-dropdown" id="customDropdown">
+          <div class="selected">Select Department</div>
+          <ul class="dropdown-options">
+            {% for dept in departments %}
+              <li data-value="{{ dept.id }}">{{ dept.name }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    
+      <div class="student-cards" id="studentList">
+        {% for student in students %}
+          <div class="student-card" data-department="{{ student.department_id }}">
+            <a href="/teacher/student/{{ student.id }}" class="student-link" data-student-id="{{ student.id }}">
+              <svg width="18px" height="18px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#4361ee"/>
+                <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#4361ee"/>
+                </svg> {{ student.username }}
+            </a>
+            <div class="student-info">
+              {% if student.department_name %}
+                <span><i class="fas fa-building"></i> {{ student.department_name }}</span>
+              {% endif %}
+              {% if student.roll_number %}
+                <span><svg width="20px" height="20px" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7V17C3.5 18.1046 4.39543 19 5.5 19H19.5C20.6046 19 21.5 18.1046 21.5 17V7C21.5 5.89543 20.6046 5 19.5 5H5.5C4.39543 5 3.5 5.89543 3.5 7Z" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M15.5 10H18.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M15.5 13H18.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 10C11.5 11.1046 10.6046 12 9.5 12C8.39543 12 7.5 11.1046 7.5 10C7.5 8.89543 8.39543 8 9.5 8C10.0304 8 10.5391 8.21071 10.9142 8.58579C11.2893 8.96086 11.5 9.46957 11.5 10Z" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5.5 16C8.283 12.863 11.552 13.849 13.5 16" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>{{ student.roll_number }}</span>
+              {% endif %}
+              {% if student.register_number %}
+                <span><svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M11 6C9.34315 6 8 7.34315 8 9V17C8 17.5523 8.44772 18 9 18C9.55229 18 10 17.5523 10 17V14L11.5 14L14.2 17.6C14.5314 18.0418 15.1582 18.1314 15.6 17.8C16.0418 17.4686 16.1314 16.8418 15.8 16.4L13.7189 13.6251C13.7944 13.5928 13.8707 13.5577 13.9472 13.5194C14.4409 13.2725 14.9649 12.8866 15.3633 12.289C15.7659 11.6851 16 10.9249 16 9.99996C16 9.07499 15.7659 8.31478 15.3633 7.71092C14.9649 7.11332 14.4408 6.7274 13.9472 6.48058C13.4575 6.23573 12.9799 6.11828 12.6332 6.06049C12.4248 6.02575 12.2117 6.0001 12 6H11ZM10 12V9C10 8.44772 10.4477 8 11 8L12.0004 8.00018C12.3603 8.01218 12.7318 8.10893 13.0528 8.26944C13.3092 8.39762 13.5351 8.5742 13.6992 8.82033C13.8591 9.06021 14 9.42497 14 9.99996C14 10.575 13.8591 10.9397 13.6992 11.1796C13.5351 11.4258 13.3091 11.6023 13.0528 11.7305C12.7318 11.891 12.3603 11.9878 12.0003 11.9998L10 12Z" fill="#666"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z" fill="#666"/>
+                  </svg> {{ student.register_number }}</span>
+              {% endif %}
+              {% if student.is_team_lead == 1 %}
+                <span><svg fill="#666" width="16px" height="16px" viewBox="0 0 128 128" id="Layer_1" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+                  <g>
+                  
+                  <polygon points="91,45 83,45 83,73 73,73 73,119 61,119 61,73 51,73 51,45 43,45 43,81 53,81 53,127 81,127 81,81 91,81  "/>
+                  
+                  <path d="M53,15c0,7.7,6.3,14,14,14s14-6.3,14-14S74.7,1,67,1S53,7.3,53,15z M73,15c0,3.3-2.7,6-6,6s-6-2.7-6-6s2.7-6,6-6   S73,11.7,73,15z"/>
+                  
+                  <path d="M19,25c0,7.7,6.3,14,14,14s14-6.3,14-14s-6.3-14-14-14S19,17.3,19,25z M39,25c0,3.3-2.7,6-6,6s-6-2.7-6-6s2.7-6,6-6   S39,21.7,39,25z"/>
+                  
+                  <polygon points="113,83 103,83 103,119 87,119 87,127 111,127 111,91 121,91 121,51 113,51  "/>
+                  
+                  <path d="M87,25c0,7.7,6.3,14,14,14s14-6.3,14-14s-6.3-14-14-14S87,17.3,87,25z M101,19c3.3,0,6,2.7,6,6s-2.7,6-6,6s-6-2.7-6-6   S97.7,19,101,19z"/>
+                  
+                  <polygon points="31,83 21,83 21,51 13,51 13,91 23,91 23,127 47,127 47,119 31,119  "/>
+                  
+                  </g>
+                  
+                  </svg></span>
+              {% endif %}
+            
+      
+            <!-- Promote/Demote Button -->
+            <form method="post" action="/teacher/toggle_team_lead">
+              <input type="hidden" name="student_id" value="{{ student.id }}">
+              {% if student.is_team_lead == 1 %}
+                <button type="submit" class="demote-btn">
+                  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.5523 3 13 3.44772 13 4V17.5858L18.2929 12.2929C18.6834 11.9024 19.3166 11.9024 19.7071 12.2929C20.0976 12.6834 20.0976 13.3166 19.7071 13.7071L12.7071 20.7071C12.3166 21.0976 11.6834 21.0976 11.2929 20.7071L4.29289 13.7071C3.90237 13.3166 3.90237 12.6834 4.29289 12.2929C4.68342 11.9024 5.31658 11.9024 5.70711 12.2929L11 17.5858V4C11 3.44772 11.4477 3 12 3Z" fill="#FFF"/>
+                    </svg> Demote
+                </button>
+              {% else %}
+                <button type="submit" class="promote-btn">
+                  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.2652 3 12.5196 3.10536 12.7071 3.29289L19.7071 10.2929C20.0976 10.6834 20.0976 11.3166 19.7071 11.7071C19.3166 12.0976 18.6834 12.0976 18.2929 11.7071L13 6.41421V20C13 20.5523 12.5523 21 12 21C11.4477 21 11 20.5523 11 20V6.41421L5.70711 11.7071C5.31658 12.0976 4.68342 12.0976 4.29289 11.7071C3.90237 11.3166 3.90237 10.6834 4.29289 10.2929L11.2929 3.29289C11.4804 3.10536 11.7348 3 12 3Z" fill="#FFF"/>
+                    </svg> Promote
+                </button>
+              {% endif %}
+            </form>
+          </div>
+      
+          </div>
+        {% endfor %}
+      </div>
+      
+    
+      <!-- Overlay for student details -->
+      <div class="overlay" id="studentOverlay">
+        <div class="modal">
+          <button class="close-btn" id="closeOverlay">
+            <i><svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z" fill="currentColor"/></svg></i>
+          </button>
+          <div class="modal-content" id="modalContent">
+            <div class="spinner2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="new-exam-section" id="new-exam-section">
+      <div class="form-container fade-in">
+        <h1>Create New Exam</h1>
+        
+        <form method="post" action="/teacher/create_exam" id="examForm">
+            <div class="form-group">
+                <label for="exam_name"> Exam Name:</label>
+                <input type="text" id="exam_name" name="exam_name" required placeholder="Enter exam name">
+            </div>
+            <div class="form-group">
+              <label for="subject_name"> Exam Subject:</label>
+              <input type="text" id="subject_name" name="subject_name" required placeholder="Enter subject name">
+          </div>
+            <div class="form-group">
+                <label for="start_time"> Start Time:</label>
+                <input type="datetime-local" id="start_time" name="start_time" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="end_time"> End Time:</label>
+                <input type="datetime-local" id="end_time" name="end_time" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration"> Duration (in minutes):</label>
+                <input type="number" id="duration" name="duration" required min="1" placeholder="e.g. 60">
+            </div>
+            
+            <div class="form-group">
+                <label for="department_id"> Department:</label>
+                <select id="department_id" name="department_id" required>
+                    <option value="">Select Department</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn"></i> Create Exam</button>
+        </form>
+        
+        <!-- Loading spinner -->
+        <div class="spinner2" id="loadingSpinner"></div>
+    </div>
+    </div>
+    
+
+    <div class="view-exam-section" id="view-exam-section">
+      
+<div id="download-icon" class="download-icon">
+  <a class="download-icon-a" href="/exam_result" style="text-decoration: none;
+  color: white;
+  display: flex
+;
+  flex-direction: row-reverse;
+  gap: 2px;
+  font-weight: 500;"><svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 15V17C19 18.1046 18.1046 19 17 19H7C5.89543 19 5 18.1046 5 17V15M12 5V15M12 15L10 13M12 15L14 13" stroke="#FFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>Results</a>
+</div>
+      <div class="exams-container">
+        <!-- Hidden table for non-mobile devices (or if needed for data storage) -->
+        
+        
+        <!-- Mobile-friendly cards -->
+        {% for exam in exams %}
+        <div class="exam-card">
+            <div class="exam-title">{{ exam.name }}</div>
+            <div class="exam-details">
+                <div class="detail-label">Start Time:</div>
+                <div class="detail-value" id="formatted-time" >{{ exam.start_time }}</div>
+                
+                <div class="detail-label">Duration:</div>
+                <div class="detail-value">{{ exam.duration }} mins</div>
+            </div>
+            <div class="action-buttons">
+                <a href="/teacher/edit_exam/{{ exam.id }}" class="action-button">
+                     Edit
+                </a>
+                <a href="/teacher/view_results/{{ exam.id }}" class="action-button">
+                    Results
+                </a>
+            </div>
+            
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+    <div class="profile-section">
+    <div class="container">
+        {% if students_apr %}
+        <div class="student-cards">
+            {% for student in students_apr %}
+            <div class="student-card">
+                <div class="card-header">
+                    <div class="username">{{ student.username }}</div>
+                    <div class="email">{{ student.email }}</div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/teacher/approve_students">
+                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                        <button type="submit" class="approve-btn">
+                            <i class="fas fa-check-circle"></i> Approve
+                        </button>
+                    </form>
+
+                    <!-- Promote/Demote button -->
+                    <form method="post" action="/admin/update_team_lead/{{ student.id }}">
+                        <input type="hidden" name="action" value="{% if student.is_team_lead %}demote{% else %}promote{% endif %}">
+                        <button type="submit" class="{% if student.is_team_lead %}demote-btn{% else %}promote-btn{% endif %}">
+                            <i class="fas {% if student.is_team_lead %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                            {% if student.is_team_lead %} Demote {% else %} Promote {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-students">
+          <svg width="33px" height="33px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" version="1.1" fill="none" stroke="#777" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+            <path d="m14.25 9.25v-3.25l-6.25-3.25-6.25 3.25 6.25 3.25 3.25-1.5v3.5c0 1-1.5 2-3.25 2s-3.25-1-3.25-2v-3.5"/>
+            </svg>
+            <p>No students pending approval at this time.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+    
+    <!-- Settings Section -->
+    <div class="settings-section">
+
+      <div class="a1">
+        <!-- Header with user info -->
+        <div class="a2">
+          <div class="a4">
+            <div id="a5" class="a6">S</div>
+            <div class="a7">
+              <div class="a8">{{ teacher.username }}</div>
+              <div class="a9">{{ teacher.email }}</div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Navigation tabs -->
+        <div class="a10">
+          <div class="a11 a12" data-tab="b1">Profile</div>
+          <div class="a11" data-tab="b2">Appearance</div>
+          <div class="a11" data-tab="b3">Notifications</div>
+          <div class="a11" data-tab="b4">Security</div>
+        </div>
+    
+        <!-- Settings content -->
+        <div class="a13">
+          <!-- Profile Section -->
+          <div id="b1" class="a14 a12">
+            <div class="a15">Personal Information</div>
+            
+            <div class="a16">
+              <div class="a17">
+                <label for="b5">Full Name</label>
+                <input type="text" id="b5" class="a18" readonly value="{{ teacher.username }}">
+              </div>
+            </div>
+            
+            <div class="a16">
+              <div class="a17">
+                <label for="b7">Email Address</label>
+                <input type="email" id="b7" class="a18" readonly value="{{ teacher.email }}">
+              </div>
+            </div>
+
+            <div class="a15">Feedbacks</div>
+            <div class="a19">
+              <span class="a20">Send Feedback</span>
+              <label class="a21">
+                <a href="/feedback/"><button class="new-noti" style="border: none;
+                  background-color: #4361ee;
+                  color: white;
+                  padding: 3px 14px;
+                  border-radius: 14px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center; "><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 12H18M12 6V18" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></button></a>
+              </label>
+            </div>
+            
+
+          </div>
+          
+          
+    
+          <!-- Appearance Section -->
+          <div id="b2" class="a14">
+            <!-- <div class="a15">Appearance Settings</div> -->
+            
+            <div class="a16">
+              <div class="a17">
+                <label>Theme Mode</label>
+                <div class="a19">
+                  <span class="a20">Dark Mode</span>
+                  <label class="a21">
+                    <input type="checkbox">
+                    <span class="a22"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="a17">
+                <label>Font Size</label>
+                <select class="a18">
+                  <option>Small</option>
+                  <option selected>Medium</option>
+                  <option>Large</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="a17">
+              <label>Avatar Color</label>
+              <div class="a23">
+                <div class="a24 a25" onclick="f1('a25')"></div>
+                <div class="a24 a26 a12" onclick="f1('a26')"></div>
+                <div class="a24 a27" onclick="f1('a27')"></div>
+                <div class="a24 a28" onclick="f1('a28')"></div>
+                <div class="a24 a29" onclick="f1('a29')"></div>
+                <div class="a24 a30" onclick="f1('a30')"></div>
+              </div>
+            </div>
+            
+    
+          </div>
+    
+          <!-- Notifications Section -->
+          <div id="b3" class="a14">
+            <div class="a15">Notification Preferences</div>
+            
+            <div class="a17">
+              <label>Notification</label>
+              <div class="a19">
+                <span class="a20">Add New Notification</span>
+                <label class="a21">
+                  <a href="/notifications/new"><button class="new-noti" style="border: none;
+                    background-color: #4361ee;
+                    color: white;
+                    padding: 3px 14px;
+                    border-radius: 14px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 12H18M12 6V18" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></button></a>
+                </label>
+              </div>
+              <label>Exam Notifications</label>
+              <div class="a19">
+                <span class="a20">Upcoming Exam Reminders</span>
+                <label class="a21">
+                  <input type="checkbox" checked>
+                  <span class="a22"></span>
+                </label>
+              </div>
+              
+            </div>
+            
+            <div class="a31"></div>
+            
+            <div class="a17">
+              <label>Communication Preferences</label>
+              <div class="a19">
+                <span class="a20">Email Notifications</span>
+                <label class="a21">
+                  <input type="checkbox" checked>
+                  <span class="a22"></span>
+                </label>
+              </div>
+              <div class="a19">
+                <span class="a20">Browser Notifications</span>
+                <label class="a21">
+                  <input type="checkbox" checked>
+                  <span class="a22"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="a31"></div>
+            
+            <div class="a17">
+              <label>System Updates</label>
+              <div class="a19">
+                <span class="a20">Portal Updates</span>
+                <label class="a21">
+                  <input type="checkbox">
+                  <span class="a22"></span>
+                </label>
+              </div>
+              <div class="a19">
+                <span class="a20">New Features</span>
+                <label class="a21">
+                  <input type="checkbox" checked>
+                  <span class="a22"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Security Section -->
+          <div id="b4" class="a14">
+            <div class="a15">Security Settings</div>
+            
+            <div class="a16">
+              <div class="a17">
+                <label for="b11">Current Password</label>
+                <input type="password" id="b11" class="a18" placeholder="••••••••">
+              </div>
+            </div>
+            
+            
+            <div class="a31"></div>
+            
+            <div class="a17">
+              <label>Account Security</label>
+              <div class="a19">
+                <span class="a20">Two-Factor Authentication</span>
+                <label class="a21">
+                  <input type="checkbox">
+                  <span class="a22"></span>
+                </label>
+              </div>
+              <div class="a19">
+                <span class="a20">Session Timeout (15 minutes)</span>
+                <label class="a21">
+                  <input type="checkbox" checked>
+                  <span class="a22"></span>
+                </label>
+              </div>
+              <div class="a19">
+                <span class="a20">Email Login Alerts</span>
+                <label class="a21">
+                  <input type="checkbox">
+                  <span class="a22"></span>
+                </label>
+              </div>
+              <div class="a19">
+                <span class="a20">Logout</span>
+                <div><a href="/logout" class="logout-button"><svg width="20px" height="20px" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.75 9.874C11.75 10.2882 12.0858 10.624 12.5 10.624C12.9142 10.624 13.25 10.2882 13.25 9.874H11.75ZM13.25 4C13.25 3.58579 12.9142 3.25 12.5 3.25C12.0858 3.25 11.75 3.58579 11.75 4H13.25ZM9.81082 6.66156C10.1878 6.48991 10.3542 6.04515 10.1826 5.66818C10.0109 5.29121 9.56615 5.12478 9.18918 5.29644L9.81082 6.66156ZM5.5 12.16L4.7499 12.1561L4.75005 12.1687L5.5 12.16ZM12.5 19L12.5086 18.25C12.5029 18.25 12.4971 18.25 12.4914 18.25L12.5 19ZM19.5 12.16L20.2501 12.1687L20.25 12.1561L19.5 12.16ZM15.8108 5.29644C15.4338 5.12478 14.9891 5.29121 14.8174 5.66818C14.6458 6.04515 14.8122 6.48991 15.1892 6.66156L15.8108 5.29644ZM13.25 9.874V4H11.75V9.874H13.25ZM9.18918 5.29644C6.49843 6.52171 4.7655 9.19951 4.75001 12.1561L6.24999 12.1639C6.26242 9.79237 7.65246 7.6444 9.81082 6.66156L9.18918 5.29644ZM4.75005 12.1687C4.79935 16.4046 8.27278 19.7986 12.5086 19.75L12.4914 18.25C9.08384 18.2892 6.28961 15.5588 6.24995 12.1513L4.75005 12.1687ZM12.4914 19.75C16.7272 19.7986 20.2007 16.4046 20.2499 12.1687L18.7501 12.1513C18.7104 15.5588 15.9162 18.2892 12.5086 18.25L12.4914 19.75ZM20.25 12.1561C20.2345 9.19951 18.5016 6.52171 15.8108 5.29644L15.1892 6.66156C17.3475 7.6444 18.7376 9.79237 18.75 12.1639L20.25 12.1561Z" fill="#fff"/>
+                  </svg></a></div>
+                
+              </div>
+
+          </div>
+
+        </div>
+      </div>
+      
+
+    </div>
+
+  </div>
+  
+
+  <div class="bottom-nav">
+    <div class="nav-item active" data-section="students" >
+       <i>
+        <svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 10.4V20M12 10.4C12 8.15979 12 7.03969 11.564 6.18404C11.1805 5.43139 10.5686 4.81947 9.81596 4.43597C8.96031 4 7.84021 4 5.6 4H4.6C4.03995 4 3.75992 4 3.54601 4.10899C3.35785 4.20487 3.20487 4.35785 3.10899 4.54601C3 4.75992 3 5.03995 3 5.6V16.4C3 16.9601 3 17.2401 3.10899 17.454C3.20487 17.6422 3.35785 17.7951 3.54601 17.891C3.75992 18 4.03995 18 4.6 18H7.54668C8.08687 18 8.35696 18 8.61814 18.0466C8.84995 18.0879 9.0761 18.1563 9.29191 18.2506C9.53504 18.3567 9.75977 18.5065 10.2092 18.8062L12 20M12 10.4C12 8.15979 12 7.03969 12.436 6.18404C12.8195 5.43139 13.4314 4.81947 14.184 4.43597C15.0397 4 16.1598 4 18.4 4H19.4C19.9601 4 20.2401 4 20.454 4.10899C20.6422 4.20487 20.7951 4.35785 20.891 4.54601C21 4.75992 21 5.03995 21 5.6V16.4C21 16.9601 21 17.2401 20.891 17.454C20.7951 17.6422 20.6422 17.7951 20.454 17.891C20.2401 18 19.9601 18 19.4 18H16.4533C15.9131 18 15.643 18 15.3819 18.0466C15.15 18.0879 14.9239 18.1563 14.7081 18.2506C14.465 18.3567 14.2402 18.5065 13.7908 18.8062L12 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+       </i>
+        
+      <span>students</span>
+    </div>
+
+    <div class="nav-item" data-section="new-exam">
+      <i>
+        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 21H7.8C6.11984 21 5.27976 21 4.63803 20.673C4.07354 20.3854 3.6146 19.9265 3.32698 19.362C3 18.7202 3 17.8802 3 16.2V3M6 15L10 11L14 15L20 9M20 9V13M20 9H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+      </i>
+      <span>new-exam</span>
+    </div>
+    <div class="nav-item" data-section="view-exam">
+      <i>
+        <svg width="20px" height="20px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 29V26H13V29H10Z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M32 44H8C5.79086 44 4 42.2091 4 40V8C4 5.79086 5.79086 4 8 4H32C34.2091 4 36 5.79086 36 8V40C36 42.2091 34.2091 44 32 44ZM18 13C18 12.4477 18.4477 12 19 12H31C31.5523 12 32 12.4477 32 13C32 13.5523 31.5523 14 31 14H19C18.4477 14 18 13.5523 18 13ZM19 16C18.4477 16 18 16.4477 18 17C18 17.5523 18.4477 18 19 18H31C31.5523 18 32 17.5523 32 17C32 16.4477 31.5523 16 31 16H19ZM15.7071 12.2929C16.0976 12.6834 16.0976 13.3166 15.7071 13.7071L11 18.4142L8.29289 15.7071C7.90237 15.3166 7.90237 14.6834 8.29289 14.2929C8.68342 13.9024 9.31658 13.9024 9.70711 14.2929L11 15.5858L14.2929 12.2929C14.6834 11.9024 15.3166 11.9024 15.7071 12.2929ZM19 24C18.4477 24 18 24.4477 18 25C18 25.5523 18.4477 26 19 26H31C31.5523 26 32 25.5523 32 25C32 24.4477 31.5523 24 31 24H19ZM18 29C18 28.4477 18.4477 28 19 28H31C31.5523 28 32 28.4477 32 29C32 29.5523 31.5523 30 31 30H19C18.4477 30 18 29.5523 18 29ZM14 24H9C8.44772 24 8 24.4477 8 25V30C8 30.5523 8.44772 31 9 31H14C14.5523 31 15 30.5523 15 30V25C15 24.4477 14.5523 24 14 24Z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M44 40L41 44L38 40V22H44V40Z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M40 15H42C43.1046 15 44 15.8954 44 17V21H38V17C38 15.8954 38.8954 15 40 15Z" fill="currentColor"/>
+          </svg>
+      </i>
+      <span>view-exams</span>
+    </div>
+    <div class="nav-item" data-section="profile">
+      <i>
+        <svg fill="currentColor" width="22" height="22px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+          <g>
+          <circle cx="41.37" cy="26.44" r="6.32"/>
+          
+          <circle cx="58.63" cy="26.43" r="6.32"/>
+          
+          <circle cx="28.4" cy="41.16" r="8"/>
+          
+          <circle cx="71.81" cy="41.16" r="8"/>
+          
+          <circle cx="50.11" cy="45.73" r="8"/>
+          
+          <path d="m59.14 80a4.18 4.18 0 0 0 3.2-1.37 4.57 4.57 0 0 0 1.37-3.2v-10.28a6.88 6.88 0 0 0 -6.86-6.86h-13.7a6.88 6.88 0 0 0 -6.86 6.86v10.28a4.68 4.68 0 0 0 4.57 4.57z"/>
+          
+          <path d="m29.32 75.43v-10.28a13.41 13.41 0 0 1 3.89-9.48 1.18 1.18 0 0 0 0-1.67 1.15 1.15 0 0 0 -.77-.33h-11a6.88 6.88 0 0 0 -6.86 6.86v10.33a4.68 4.68 0 0 0 4.57 4.57z"/>
+          
+          <path d="m80.85 75.43a4.18 4.18 0 0 0 3.2-1.37 4.57 4.57 0 0 0 1.37-3.2v-10.28a6.88 6.88 0 0 0 -6.86-6.86h-11a1.14 1.14 0 0 0 -.8 2 13.68 13.68 0 0 1 3.89 9.48v10.23z"/>
+          
+          </g>
+          
+          </svg>
+      </i>
+      <span>Requests</span>
+    </div>
+    <div class="nav-item" data-section="settings">
+      <i>
+        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.2788 2.15224C13.9085 2 13.439 2 12.5 2C11.561 2 11.0915 2 10.7212 2.15224C10.2274 2.35523 9.83509 2.74458 9.63056 3.23463C9.53719 3.45834 9.50065 3.7185 9.48635 4.09799C9.46534 4.65568 9.17716 5.17189 8.69017 5.45093C8.20318 5.72996 7.60864 5.71954 7.11149 5.45876C6.77318 5.2813 6.52789 5.18262 6.28599 5.15102C5.75609 5.08178 5.22018 5.22429 4.79616 5.5472C4.47814 5.78938 4.24339 6.1929 3.7739 6.99993C3.30441 7.80697 3.06967 8.21048 3.01735 8.60491C2.94758 9.1308 3.09118 9.66266 3.41655 10.0835C3.56506 10.2756 3.77377 10.437 4.0977 10.639C4.57391 10.936 4.88032 11.4419 4.88029 12C4.88026 12.5581 4.57386 13.0639 4.0977 13.3608C3.77372 13.5629 3.56497 13.7244 3.41645 13.9165C3.09108 14.3373 2.94749 14.8691 3.01725 15.395C3.06957 15.7894 3.30432 16.193 3.7738 17C4.24329 17.807 4.47804 18.2106 4.79606 18.4527C5.22008 18.7756 5.75599 18.9181 6.28589 18.8489C6.52778 18.8173 6.77305 18.7186 7.11133 18.5412C7.60852 18.2804 8.2031 18.27 8.69012 18.549C9.17714 18.8281 9.46533 19.3443 9.48635 19.9021C9.50065 20.2815 9.53719 20.5417 9.63056 20.7654C9.83509 21.2554 10.2274 21.6448 10.7212 21.8478C11.0915 22 11.561 22 12.5 22C13.439 22 13.9085 22 14.2788 21.8478C14.7726 21.6448 15.1649 21.2554 15.3694 20.7654C15.4628 20.5417 15.4994 20.2815 15.5137 19.902C15.5347 19.3443 15.8228 18.8281 16.3098 18.549C16.7968 18.2699 17.3914 18.2804 17.8886 18.5412C18.2269 18.7186 18.4721 18.8172 18.714 18.8488C19.2439 18.9181 19.7798 18.7756 20.2038 18.4527C20.5219 18.2105 20.7566 17.807 21.2261 16.9999C21.6956 16.1929 21.9303 15.7894 21.9827 15.395C22.0524 14.8691 21.9088 14.3372 21.5835 13.9164C21.4349 13.7243 21.2262 13.5628 20.9022 13.3608C20.4261 13.0639 20.1197 12.558 20.1197 11.9999C20.1197 11.4418 20.4261 10.9361 20.9022 10.6392C21.2263 10.4371 21.435 10.2757 21.5836 10.0835C21.9089 9.66273 22.0525 9.13087 21.9828 8.60497C21.9304 8.21055 21.6957 7.80703 21.2262 7C20.7567 6.19297 20.522 5.78945 20.2039 5.54727C19.7799 5.22436 19.244 5.08185 18.7141 5.15109C18.4722 5.18269 18.2269 5.28136 17.8887 5.4588C17.3915 5.71959 16.7969 5.73002 16.3099 5.45096C15.8229 5.17191 15.5347 4.65566 15.5136 4.09794C15.4993 3.71848 15.4628 3.45833 15.3694 3.23463C15.1649 2.74458 14.7726 2.35523 14.2788 2.15224ZM12.5 15C14.1695 15 15.5228 13.6569 15.5228 12C15.5228 10.3431 14.1695 9 12.5 9C10.8305 9 9.47716 10.3431 9.47716 12C9.47716 13.6569 10.8305 15 12.5 15Z" fill="currentColor"/>
+        </svg>
+      </i>
+      <span>Settings</span>
+    </div>
+  </div>
+
+
+  <script>
+    showLoading();
+        window.addEventListener("load", function() {
+        hideLoading();
+    });
+      window.onload = function() {
+    if (sessionStorage.getItem('backTriggered') === 'true') {
+      sessionStorage.removeItem('backTriggered'); // Clear flag
+      hideLoading(); // Call the function
+    }
+  };
+
+   // Handle bottom navigation.
+const navItems = document.querySelectorAll('.nav-item');
+const sections = {
+  'students': document.querySelector('.students-details-section'),
+  'new-exam': document.querySelector('.new-exam-section'),
+  'view-exam': document.querySelector('.view-exam-section'),
+  'profile': document.querySelector('.profile-section'),
+  'settings': document.querySelector('.settings-section')
+};
+
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    // Show the loader.
+    showLoading();
+
+    // Get the section name from data attribute.
+    const sectionName = item.getAttribute('data-section');
+
+    // Update active nav item.
+    navItems.forEach(nav => nav.classList.remove('active'));
+    item.classList.add('active');
+
+    // Update active section.
+    Object.values(sections).forEach(section => section.classList.remove('active'));
+    sections[sectionName].classList.add('active');
+
+    // Hide the loader.
+    hideLoading();
+  });
+});
+
+
+    const deptFilter = document.getElementById('departmentFilter');
+    const studentList = document.getElementById('studentList');
+    const studentOverlay = document.getElementById('studentOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const closeOverlay = document.getElementById('closeOverlay');
+  
+    function filterStudents(selectedDept) {
+      const students = studentList.getElementsByClassName('student-card');
+      for (let i = 0; i < students.length; i++) {
+        const studentDept = students[i].getAttribute('data-department');
+        students[i].style.display = studentDept === selectedDept ? '' : 'none';
+      }
+    }
+  
+    // Overlay close functionality remains unchanged
+    closeOverlay.addEventListener('click', function() {
+      studentOverlay.classList.remove('active');
+      setTimeout(() => {
+        modalContent.innerHTML = '<div class="spinner2"></div>';
+      }, 300);
+    });
+  
+    studentOverlay.addEventListener('click', function(e) {
+      if (e.target === studentOverlay) {
+        studentOverlay.classList.remove('active');
+        setTimeout(() => {
+          modalContent.innerHTML = '<div class="spinner2"></div>';
+        }, 300);
+      }
+    });
+  
+    const studentLinks = document.getElementsByClassName('student-link');
+    for (let link of studentLinks) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        studentOverlay.classList.add('active');
+        modalContent.innerHTML = '<div class="spinner2"></div>';
+        
+        fetch(this.href)
+          .then(response => response.text())
+          .then(html => {
+            modalContent.innerHTML = html;
+          })
+          .catch(error => {
+            modalContent.innerHTML = `
+              <div style="text-align: center; padding: 30px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f44336; margin-bottom: 20px;"></i>
+                <p>Error loading student details. Please try again later.</p>
+              </div>
+            `;
+            console.error('Error fetching student details:', error);
+          });
+      });
+    }
+  
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && studentOverlay.classList.contains('active')) {
+        studentOverlay.classList.remove('active');
+      }
+    });
+  
+    // Custom dropdown handling (only option-related changes)
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdown = document.getElementById('customDropdown');
+      const selected = dropdown.querySelector('.selected');
+      const optionsContainer = dropdown.querySelector('.dropdown-options');
+      // Query all <li> items in the dropdown options
+      const optionItems = dropdown.querySelectorAll('.dropdown-options li');
+  
+      // Automatically select the first option and filter students
+      if (optionItems.length > 0) {
+        const firstOption = optionItems[0];
+        const firstValue = firstOption.getAttribute('data-value');
+        const firstText = firstOption.textContent;
+  
+        selected.textContent = firstText;
+        selected.setAttribute('data-value', firstValue);
+  
+        filterStudents(firstValue);
+      }
+  
+      // Toggle dropdown when clicking the selected area
+      selected.addEventListener('click', function(e) {
+        optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+        e.stopPropagation();
+      });
+  
+      // Close dropdown if clicked outside
+      document.addEventListener('click', function() {
+        optionsContainer.style.display = 'none';
+      });
+  
+      // Handle option selection
+      optionsContainer.addEventListener('click', function(e) {
+        if (e.target && e.target.nodeName === "LI") {
+          selected.textContent = e.target.textContent;
+          const selectedValue = e.target.getAttribute('data-value');
+          selected.setAttribute('data-value', selectedValue);
+          optionsContainer.style.display = 'none';
+  
+          // Trigger filtering based on the selected department
+          filterStudents(selectedValue);
+        }
+      });
+    });
+    document.getElementById('examForm').addEventListener('submit', function() {
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            // Disable submit button to prevent double submission
+            document.querySelector('button[type="submit"]').disabled = true;
+        });
+
+        // Auto-calculate duration when start and end times change
+        const startTimeInput = document.getElementById('start_time');
+        const endTimeInput = document.getElementById('end_time');
+        const durationInput = document.getElementById('duration');
+
+        function updateDuration() {
+            if (startTimeInput.value && endTimeInput.value) {
+                const startTime = new Date(startTimeInput.value);
+                const endTime = new Date(endTimeInput.value);
+                
+                if (endTime > startTime) {
+                    // Calculate duration in minutes
+                    const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
+                    durationInput.value = durationMinutes;
+                }
+            }
+        }
+
+        startTimeInput.addEventListener('change', updateDuration);
+        endTimeInput.addEventListener('change', updateDuration);
+        document.addEventListener("DOMContentLoaded", function() {
+    if (!sessionStorage.getItem("betaAlertShown")) {
+        showAlert('App Update', 'You are using a beta version of this app. There may be bugs and unfinished features. We appreciate your feedback as we continue to improve.');
+        sessionStorage.setItem("betaAlertShown", "true"); // Mark that alert has been shown
+    }
+});
+    document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".action-button").forEach(link => {
+        link.addEventListener("click", function() {
+            showLoading(); // Call the loading function
+        });
+    });
+});
+function showLoading() {
+        var overlay = document.querySelector(".overlay");
+        overlay.style.opacity = "1";
+        overlay.style.visibility = "visible";
+    }
+    function hideLoading() {
+    var overlay = document.querySelector(".overlay");
+    overlay.style.opacity = "0";
+    overlay.style.visibility = "hidden";
+}
+
+document.querySelector(".logout-button").addEventListener("click", function() {
+    showLoading();
+});
+document.querySelector(".new-noti").addEventListener("click", function() {
+    showLoading();
+});
+
+document.querySelector(".download-icon-a").addEventListener("click", function() {
+    showLoading();
+});
+
+
+
+
+document.addEventListener("click", function(event) {
+    if (event.target.classList.contains("promote-btn") || event.target.classList.contains("demote-btn")) {
+        showLoading();
+    }
+});
+
+
+
+    document.querySelector(".refresh-button").addEventListener("click", function() {
+  setTimeout(() => {
+     showLoading();
+    }, 70);
+    
+});
+
+      window.addEventListener('pageshow', function(event) {
+    console.log('Pageshow event fired!');
+    hideLoading();
+  });
+
+const drawer = document.getElementById('notification-drawer');
+const drawerHandle = document.getElementById('drawer-handle');
+const notificationIcon = document.getElementById('notification-icon');
+const closeDrawerBtn = document.getElementById('close-drawer');
+const notificationCount = document.getElementById('notification-count');
+
+// Drawer state
+let isDrawerOpen = false;
+let startY = 0;
+let currentHeight = 400;
+let isDragging = false;
+
+// Function to load unread notification count
+async function loadUnreadCount() {
+  try {
+    const res = await fetch('/api/notifications/count');
+    const data = await res.json();
+    
+    if(data.unread_count > 0) {
+      notificationCount.style.display = "flex";
+      notificationCount.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+    } else {
+      notificationCount.style.display = "none";
+    }
+  } catch (err) {
+    console.error("Error fetching unread count:", err);
+  }
+}
+
+// Function to load notifications with spinner support
+async function loadNotifications() {
+  const spinner = document.getElementById("spinner");
+  const list = document.getElementById("notification-list");
+  
+  // Clear the list and show the spinner
+  list.innerHTML = "";
+  if (spinner) {
+    spinner.style.display = "flex";
+  }
+  
+  try {
+    const res = await fetch('/api/notifications/view');
+    const data = await res.json();
+    
+    // Hide the spinner after data is loaded
+    if (spinner) {
+      spinner.style.display = "none";
+    }
+    
+    if(data.notifications.length === 0) {
+      list.innerHTML = "<li style='padding: 15px; text-align: center; color: #777;'>No notifications yet!</li>";
+    } else {
+      data.notifications.forEach(notif => {
+        const li = document.createElement("li");
+        li.style.padding = "12px";
+        li.style.borderBottom = "1px solid #eee";
+
+        const utcDate = new Date(notif.notifications.created_at);
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+        const istDate = new Date(utcDate.getTime() + istOffset);
+        const time = istDate.toLocaleString("en-IN"); // Indian format
+
+        li.innerHTML = `
+          <div style="margin-bottom: 5px;">
+            <div class="user-avatar-div-m">
+              <div class="user-avatar-div">
+                <div class="user-avatar">${getInitials(notif.notifications.sender.username)}</div>
+                <strong style="color: #333;" font-size: 14px;>${notif.notifications.sender.username}</strong>
+              </div>
+              <span style="float: right; font-size: 12px; color: #999;">${time}</span>
+            </div>
+          </div>
+          <div style="color: #555; line-height: 1.4; margin-left: 40px; font-size: 14px;">${notif.notifications.message}</div>
+        `;
+        list.appendChild(li);
+      });
+    }
+    
+    loadUnreadCount();
+  } catch (err) {
+    if (spinner) {
+      spinner.style.display = "none";
+    }
+    console.error("Error fetching notifications:", err);
+  }
+}
+
+// Open the drawer
+function openDrawer() {
+  drawer.style.bottom = "0";
+  isDrawerOpen = true;
+  loadNotifications();
+}
+
+// Helper to get initials from a name
+function getInitials(name) {
+  return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase();
+}
+
+// Close the drawer
+function closeDrawer() {
+  drawer.style.bottom = `-${currentHeight}px`;
+  isDrawerOpen = false;
+}
+
+// Toggle drawer on notification icon click
+notificationIcon.addEventListener('click', () => {
+  if (isDrawerOpen) {
+    closeDrawer();
+  } else {
+    openDrawer();
+  }
+});
+
+// Close drawer on button click
+closeDrawerBtn.addEventListener('click', closeDrawer);
+
+// Handle drawer dragging (mouse)
+drawerHandle.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startY = e.clientY;
+  
+  // Disable transition during drag
+  drawer.style.transition = 'none';
+  document.body.style.userSelect = 'none';
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  
+  const deltaY = startY - e.clientY;
+  currentHeight = Math.min(Math.max(200, currentHeight + deltaY), window.innerHeight * 0.8);
+  drawer.style.height = `${currentHeight}px`;
+  
+  startY = e.clientY;
+});
+
+document.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    drawer.style.transition = 'bottom 0.3s ease';
+    document.body.style.userSelect = '';
+  }
+});
+
+// Handle drawer dragging (touch support)
+drawerHandle.addEventListener('touchstart', (e) => {
+  isDragging = true;
+  startY = e.touches[0].clientY;
+  drawer.style.transition = 'none';
+});
+
+document.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  
+  const deltaY = startY - e.touches[0].clientY;
+  currentHeight = Math.min(Math.max(200, currentHeight + deltaY), window.innerHeight * 0.8);
+  drawer.style.height = `${currentHeight}px`;
+  
+  startY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', () => {
+  if (isDragging) {
+    isDragging = false;
+    drawer.style.transition = 'bottom 0.3s ease';
+  }
+});
+
+// Initialize unread count on window load
+window.onload = loadUnreadCount;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.detail-value');
+
+    elements.forEach(element => {
+      const dateTimeStr = element.textContent.trim();
+
+      // Check if the string matches ISO date format (basic check)
+      if (!dateTimeStr.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+        console.warn("Skipping invalid date:", dateTimeStr);
+        return;
+      }
+
+      const dateTime = new Date(dateTimeStr);
+
+      if (isNaN(dateTime)) {
+        console.error("Invalid date:", dateTimeStr);
+        return;
+      }
+
+      // Adjust to GMT+5:30
+      const offsetMinutes = 330; // 5 hours 30 minutes
+      const adjustedTime = new Date(dateTime.getTime() + offsetMinutes * 60000);
+
+      // Format date
+      const formattedDate = adjustedTime.getUTCFullYear() + '-' + 
+                             String(adjustedTime.getUTCMonth() + 1).padStart(2, '0') + '-' +
+                             String(adjustedTime.getUTCDate()).padStart(2, '0');
+
+      // Format time in 12-hour format
+      let hours = adjustedTime.getUTCHours();
+      const minutes = String(adjustedTime.getUTCMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+
+      const formattedTime = `${hours}:${minutes} ${ampm}`;
+
+      // Display the result
+      element.textContent = `${formattedDate} ${formattedTime}`;
+    });
+  });
+
+</script>
+  
+
+</body>
+</html>

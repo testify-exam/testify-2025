@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Teacher - My Exams</title>
+    <style>
+        :root {
+          --primary-color: #4361ee;
+          --secondary-color: #3f37c9;
+          --accent-color: #4cc9f0;
+          --text-color: #333;
+          --light-color: #f8f9fa;
+          --border-radius: 12px;
+          --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+          background-color: #f5f7fb;
+          color: var(--text-color);
+          position: relative;
+          min-height: 100vh;
+          padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 10px;
+        }
+        #download-icon{
+            position: fixed;
+            bottom: 130px;
+            right: 10px;
+            z-index: 1000;
+            cursor: pointer;
+            background: #667ef0;
+            border-radius: 22px;
+            padding: 9px;
+          }
+        @media (max-width: 768px) { 
+          #download-icon{
+            bottom: 20px;
+          }
+          
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #2d3748;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #4a56e2;
+            border-radius: 2px;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #4a56e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-top: 0;
+        }
+        
+        .home-link:hover {
+            background-color: #3a46c2;
+        }
+        
+        .home-link i {
+            margin-right: 6px;
+        }
+
+        /* Mobile-optimized table styles */
+        .exam-card {
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .exam-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e0e6ff;
+            padding-bottom: 8px;
+        }
+
+        .exam-details {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 5px 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #4a5568;
+            font-weight: normal;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 8px 0;
+            text-align: center;
+            background-color: #f0f3ff;
+            color: #4a56e2;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            background-color: #4a56e2;
+            color: white;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            background-color: #f5f7fb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .exams-container {
+            padding: 0 10px 20px 10px;
+        }
+
+        /* Hide table on mobile - use cards instead */
+        table {
+            display: none;
+        }
+
+        /* Optional bottom nav styling */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #777;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            display: block;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>My Exams</h1>
+        <a href="javascript:history.back()" class="home-link"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div id="download-icon" class="download-icon">
+        <a href="/exam_result" style="text-decoration: none;
+        color: white;
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 2px;
+        font-weight: 500;"><svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 15V17C19 18.1046 18.1046 19 17 19H7C5.89543 19 5 18.1046 5 17V15M12 5V15M12 15L10 13M12 15L14 13" stroke="#FFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>Results</a>
+      </div>
+    
+    <div class="exams-container">
+        <!-- Hidden table for non-mobile devices (or if needed for data storage) -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Exam Name</th>
+                    <th>Start Time</th>
+                    <th>Duration (mins)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.name }}</td>
+                    <td>{{ exam.start_time }}</td>
+                    <td>{{ exam.duration }}</td>
+                    <td>
+                        <a href="/teacher/edit_exam/{{ exam.id }}">Edit</a>
+                        <a href="/teacher/view_results/{{ exam.id }}">View Results</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Mobile-friendly cards -->
+        {% for exam in exams %}
+        <div class="exam-card">
+            <div class="exam-title">{{ exam.name }}</div>
+            <div class="exam-details">
+                <div class="detail-label">Start Time:</div>
+                <div class="detail-value">{{ exam.start_time }}</div>
+                
+                <div class="detail-label">Duration:</div>
+                <div class="detail-value">{{ exam.duration }} mins</div>
+            </div>
+            <div class="action-buttons">
+                <a href="/teacher/edit_exam/{{ exam.id }}" class="action-button">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="/teacher/view_results/{{ exam.id }}" class="action-button">
+                    <i class="fas fa-chart-bar"></i> Results
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+
+</body>
+</html>

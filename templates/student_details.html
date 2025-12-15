@@ -1,0 +1,82 @@
+<div class="student-details fade-in">
+    <div class="student-header">
+      <div class="student-avatar">
+        <i><svg width="38px" height="38px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#4361ee"/>
+          <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#4361ee"/>
+          </svg></i>
+      </div>
+      <div class="student-title">
+        <h2>{{ student.username }}</h2>
+        <div class="student-badges">
+          {% if student.roll_number %}
+            <span class="badge"><i ><svg width="20px" height="20px" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7V17C3.5 18.1046 4.39543 19 5.5 19H19.5C20.6046 19 21.5 18.1046 21.5 17V7C21.5 5.89543 20.6046 5 19.5 5H5.5C4.39543 5 3.5 5.89543 3.5 7Z" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15.5 10H18.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M15.5 13H18.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 10C11.5 11.1046 10.6046 12 9.5 12C8.39543 12 7.5 11.1046 7.5 10C7.5 8.89543 8.39543 8 9.5 8C10.0304 8 10.5391 8.21071 10.9142 8.58579C11.2893 8.96086 11.5 9.46957 11.5 10Z" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.5 16C8.283 12.863 11.552 13.849 13.5 16" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              </svg></i> Roll: {{ student.roll_number }}</span>
+          {% endif %}
+          {% if student.register_number %}
+            <span class="badge"><i >
+              <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11 6C9.34315 6 8 7.34315 8 9V17C8 17.5523 8.44772 18 9 18C9.55229 18 10 17.5523 10 17V14L11.5 14L14.2 17.6C14.5314 18.0418 15.1582 18.1314 15.6 17.8C16.0418 17.4686 16.1314 16.8418 15.8 16.4L13.7189 13.6251C13.7944 13.5928 13.8707 13.5577 13.9472 13.5194C14.4409 13.2725 14.9649 12.8866 15.3633 12.289C15.7659 11.6851 16 10.9249 16 9.99996C16 9.07499 15.7659 8.31478 15.3633 7.71092C14.9649 7.11332 14.4408 6.7274 13.9472 6.48058C13.4575 6.23573 12.9799 6.11828 12.6332 6.06049C12.4248 6.02575 12.2117 6.0001 12 6H11ZM10 12V9C10 8.44772 10.4477 8 11 8L12.0004 8.00018C12.3603 8.01218 12.7318 8.10893 13.0528 8.26944C13.3092 8.39762 13.5351 8.5742 13.6992 8.82033C13.8591 9.06021 14 9.42497 14 9.99996C14 10.575 13.8591 10.9397 13.6992 11.1796C13.5351 11.4258 13.3091 11.6023 13.0528 11.7305C12.7318 11.891 12.3603 11.9878 12.0003 11.9998L10 12Z" fill="#666"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z" fill="#666"/>
+                </svg>
+            </i> Reg: {{ student.register_number }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  
+    <div class="info-card">
+      <div class="info-title">
+        <i class="fas fa-envelope"></i> Contact Information
+      </div>
+      <div class="info-content">
+        <p><strong>Email:</strong> {{ student.email }}</p>
+      </div>
+    </div>
+  
+    <div class="info-card">
+      <div class="info-title">
+        Academic Performance
+      </div>
+      <div class="info-content">
+        <h3>Exam Scores</h3>
+        
+        {% if exams %}
+          <div class="scores-container">
+            {% for exam in exams %}
+              <div class="score-item">
+                <div class="score-name">{{ exam.name }}</div>
+                <div class="score-bar-container">
+                  <div class="score-bar" style="width: {{ exam.score }}%;">
+                    <span class="score-value">{{ exam.score }}</span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="no-data">No exam scores available</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Animation for score bars
+    document.addEventListener('DOMContentLoaded', function() {
+      // Force a reflow to make sure the animation works
+      const scoreBars = document.querySelectorAll('.score-bar');
+      scoreBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 100);
+      });
+    });
+  </script>

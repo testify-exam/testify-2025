@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50 antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+    <style>
+        
+        .spinCon {
+            width: 4rem; 
+            height: 4rem; 
+            position: relative;
+        }
+        
+        @keyframes spin-variable {
+            0% {
+                transform: rotate(0deg);
+                animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1); 
+            }
+
+            30% {
+                transform: rotate(360deg);
+                animation-timing-function: cubic-bezier(0, 0, 1, 1); 
+            }
+
+            60% {
+                transform: rotate(540deg); 
+                animation-timing-function: cubic-bezier(0.0, 0.0, 0.6, 1); 
+            }
+            
+ 
+            100% {
+                transform: rotate(1080deg);
+                animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1); 
+            }
+        }
+        
+        .spinVg {
+            width: 100%;
+            height: 100%;
+            
+            animation: spin-variable 4s infinite; 
+            transform-origin: center; 
+        }
+
+        @keyframes spin-linear {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        </style>
+</head>
+<body class="h-full text-gray-900">
+
+
+            <div class="mb-10">
+                <div class="md:flex md:items-center md:justify-between mb-6">
+                    <div class="min-w-0 flex-1">
+                        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Create New Exam</h2>
+                        <p class="mt-1 text-sm text-gray-500">Fill in the details below to schedule a new examination.</p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+                    <div class="p-6 sm:p-8">
+                        <form id="createExamFormCrx" class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                            
+                            <div class="sm:col-span-3">
+                                <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Exam Name</label>
+                                <div class="mt-2">
+                                    <input type="text" name="name" placeholder="e.g. Midterm Physics" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" required>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="subject" class="block text-sm font-medium leading-6 text-gray-900">Subject</label>
+                                <div class="mt-2">
+                                    <input type="text" name="subject" placeholder="e.g. Physics" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" required>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label for="start_time" class="block text-sm font-medium leading-6 text-gray-900">Start Time</label>
+                                <div class="mt-2">
+                                    <input type="datetime-local" name="start_time" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" required>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label for="end_time" class="block text-sm font-medium leading-6 text-gray-900">End Time</label>
+                                <div class="mt-2">
+                                    <input type="datetime-local" name="end_time" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" required>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-1">
+                                <label for="duration" class="block text-sm font-medium leading-6 text-gray-900">Duration (min)</label>
+                                <div class="mt-2">
+                                    <input type="number" name="duration" placeholder="60" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" min="1" required>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-1">
+                                <label for="department_id" class="block text-sm font-medium leading-6 text-gray-900">Department</label>
+                                <div class="mt-2">
+                                    <select id="createDeptSelectCrx" name="department_id" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-shadow" required>
+                                        <option value="">Loading...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-6 pt-2">
+                                <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center rounded-xl bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    Create Exam
+                                </button>
+                                
+                                <div class="mt-4">
+                                    <p id="createMessageCrx" class="text-sm font-medium text-gray-700 hidden border-l-4 border-gray-900 pl-3"></p>
+                                    <p id="createErrorCrx" class="text-sm font-medium text-gray-900 hidden border-l-4 border-gray-500 pl-3"></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative mb-10">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="bg-gray-50 px-2 text-sm text-gray-500">Existing Records</span>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Your Exams</h3>
+                <div id="examsListCrx" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="col-span-full text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300">
+                        <div class="h-full w-full flex  justify-center items-center">
+                            <div class="spinCon">
+                                <svg class="spinVg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/>
+                                    <circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/>
+                                    <circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/>
+                                    <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <div id="questionsModalCrx" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center text-center sm:items-center p-0 ">
+                <div class="relative transform md:h-full h-[-webkit-fill-available] overflow-hidden md:rounded-xl bg-white text-left md:shadow-2xl transition-all m-0 md:my-8 w-full md:max-w-4xl border border-gray-200">
+
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 id="modalExamNameCrx" class="text-lg font-semibold leading-6 text-gray-900">Manage Questions</h2>
+                        <button onclick="closeQuestionsModalCrx()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="px-4 py-5 sm:p-6 md:max-h-[70vh] ">
+                        <div class="flex gap-6 flex-col lg:flex-row">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Editor</h3>
+                                <form id="modalQuestionFormCrx" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <textarea name="question_text" placeholder="Type your question here..." class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 mb-4 resize-none h-24" required></textarea>
+                                    
+                                    <div id="modalOptionsContainerCrx" class="space-y-3 mb-4"></div>
+                                    
+                                    <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                                        <button type="button" id="modalAddOptionBtnCrx" class="inline-flex justify-center items-center rounded-xl bg-white px-3 py-2 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1">
+                                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                                            </svg>
+                                            Add Option
+                                        </button>
+                                        <button type="submit" id="submitQuestionBtnCrx" class="flex-1 inline-flex justify-center rounded-xl bg-black px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-800">Add Question</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="flex-1 border-t lg:border-t-0 lg:border-l border-gray-100 lg:pl-6 pt-6 lg:pt-0">
+                                <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Current Questions</h3>
+                                <div id="modalQuestionsListCrx" class="space-y-3 overflow-y-auto custom-scrollbar pr-3 h-80 md:h-96">
+                                    <div class="h-full w-full flex  justify-center items-center">
+                                        <div class="spinCon">
+                                            <svg class="spinVg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/>
+                                                <circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/>
+                                                <circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/>
+                                                <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100">
+                        <button id="finishBtnCrx" type="button" class="inline-flex w-full justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:ml-3 sm:w-auto">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Exam Modal -->
+    <div id="editExamModalCrx" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Edit Exam Details</h3>
+                        <form id="editExamFormModalCrx" class="space-y-4">
+                            <input type="text" name="name" placeholder="Exam Name" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" required>
+                            <input type="text" name="subject" placeholder="Subject" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" required>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="datetime-local" name="start_time" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" required>
+                                <input type="datetime-local" name="end_time" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="number" name="duration" placeholder="Duration (min)" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" min="1" required>
+                                <select name="department_id" class="block w-full rounded-xl border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6" required>
+                                    <option value="">Select Department</option>
+                                </select>
+                            </div>
+
+                            <div class="mt-6 sm:flex sm:flex-row-reverse gap-2">
+                                <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto">Save Changes</button>
+                                <button type="button" onclick="closeEditExamModalCrx()" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let departmentExCrx = [];
+        let examsCrx = [];
+        let questionsCrx = [];
+        let currentExamIdCrx = null;
+        let currentEditingIdCrx = null;
+        let currentEditExamIdCrx = null;
+
+        async function apiCallCrx(endpoint, method = 'GET', body = null) {
+            const options = { method, headers: { 'Content-Type': 'application/json' } };
+            if (body) options.body = JSON.stringify(body);
+            const response = await fetch(`${API_BASE}${endpoint}`, options);
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || `HTTP ${response.status}`);
+            }
+            return response.json();
+        }
+
+        function populateSelectOptionsCrx(select, depts) {
+            select.innerHTML = '<option value="">Select Department</option>';
+            depts.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.id;
+                option.textContent = dept.name;
+                select.appendChild(option);
+            });
+        }
+
+        async function populateDepartmentsCrx() {
+            if (departmentExCrx.length > 0) {
+                populateSelectOptionsCrx(document.getElementById('createDeptSelectCrx'), departmentExCrx);
+                return;
+            }
+            try {
+                const result = await apiCallCrx('/departments/');
+                console.log(result);
+                departmentExCrx = result.departments;
+                populateSelectOptionsCrx(document.getElementById('createDeptSelectCrx'), departmentExCrx);
+            } catch (err) {
+                console.error('Failed to load departments:', err);
+                document.getElementById('createDeptSelectCrx').innerHTML = '<option value="">Error loading departments</option>';
+            }
+        }
+
+        async function fetchExamsCrx() {
+            try {
+                const result = await apiCallCrx('/exams/');
+                examsCrx = result.exams;
+                renderExamsCrx();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('examsListCrx').innerHTML = '<p class="text-gray-900 font-medium">Failed to load exams.</p>';
+            }
+        }
+
+        function escapeJsonForHtmlCrx(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;');
+        }
+
+        function renderExamsCrx() {
+            const container = document.getElementById('examsListCrx');
+            if (examsCrx.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
+                        <p class="text-gray-500">No exams created yet. Use the form above to start.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = examsCrx.map(exam => `
+                <div class="flex flex-col overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="p-5 flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                             <h3 class="font-bold text-lg text-gray-900">${exam.name}</h3>
+                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">${exam.questions_count} Qs</span>
+                        </div>
+                        <div class="space-y-1 text-sm text-gray-600">
+                            <p class="flex items-center gap-2">
+                                <span class="font-medium text-gray-900">Subject:</span> ${exam.subject}
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <span class="font-medium text-gray-900">Dept:</span> ${exam.department_name}
+                            </p>
+                            <div class="pt-2 border-t border-gray-100 mt-2">
+                                <p class="text-xs text-gray-500">
+                                    ${new Date(exam.start_time_local).toLocaleString(undefined, {dateStyle:'short', timeStyle:'short'})} <br>
+                                    ↓ <br>
+                                    ${new Date(exam.end_time_local).toLocaleString(undefined, {dateStyle:'short', timeStyle:'short'})}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 px-5 py-3 flex items-center justify-between gap-2">
+                        <div class="flex gap-2">
+                            <button onclick="openEditExamCrx(${exam.id}, ${escapeJsonForHtmlCrx(JSON.stringify(exam))})" 
+                                    class="text-xs font-medium text-gray-600 hover:text-black transition-colors">
+                                Edit
+                            </button>
+                            <span class="text-gray-300">|</span>
+                            <button onclick="openQuestionsModalCrx(${exam.id}, '${exam.name.replace(/'/g, "\\'").replace(/"/g, "\\\"")}')"
+                                    class="text-xs font-medium text-gray-600 hover:text-black transition-colors">
+                                Questions
+                            </button>
+                        </div>
+                        <button onclick="deleteExamCrx(${exam.id})" 
+                                class="text-xs font-medium text-gray-400 hover:text-gray-900 transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupCreateFormCrx() {
+            const form = document.getElementById('createExamFormCrx');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const examData = {
+                    name: formData.get('name'),
+                    subject: formData.get('subject'),
+                    start_time: formData.get('start_time'),
+                    end_time: formData.get('end_time'),
+                    duration: parseInt(formData.get('duration')),
+                    department_id: parseInt(formData.get('department_id'))
+                };
+                
+                const msgEl = document.getElementById('createMessageCrx');
+                const errEl = document.getElementById('createErrorCrx');
+                msgEl.classList.add('hidden');
+                errEl.classList.add('hidden');
+
+                try {
+                    const result = await apiCallCrx('/exams/', 'POST', examData);
+                    msgEl.textContent = `Success: Exam created (ID: ${result.exam_id})`;
+                    msgEl.classList.remove('hidden');
+                    e.target.reset();
+                    openQuestionsModalCrx(result.exam_id, examData.name, true);
+                    fetchExamsCrx();
+                } catch (err) {
+                    errEl.textContent = `Error: ${err.message}`;
+                    errEl.classList.remove('hidden');
+                }
+            });
+        }
+        function createOptionInputCrx(i, text = '', checked = false) {
+            return `
+                <div class="flex items-center gap-2 mb-2 group">
+                    <div class="flex-1 relative rounded-xl shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                           <span class="text-gray-400 text-xs">${i}</span>
+                        </div>
+                        <input type="text" name="option_text_${i}" placeholder="Option text" value="${text}" 
+                            class="block w-full rounded-xl border-0 py-1.5 pl-8 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black sm:text-xs sm:leading-6" required>
+                    </div>
+                    
+                    <label class="flex items-center gap-1 cursor-pointer select-none">
+                        <input type="checkbox" name="is_correct_${i}" ${checked ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-black focus:ring-black">
+                        <span class="text-xs text-gray-600">Correct</span>
+                    </label>
+
+                    <button type="button" onclick="removeAndRenumberCrx(this)" class="text-gray-400 hover:text-gray-900 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                             <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+        }
+
+        function removeAndRenumberCrx(btn) {
+            btn.closest('div.flex').remove();
+            renumberOptionsCrx();
+        }
+
+        function renumberOptionsCrx() {
+            const cont = document.getElementById('modalOptionsContainerCrx');
+            const divs = cont.querySelectorAll('div.flex.items-center.gap-2'); // specific selector
+            divs.forEach((div, idx) => {
+                const i = idx + 1;
+                const inp = div.querySelector('input[type="text"]');
+                inp.name = `option_text_${i}`;
+                const span = div.querySelector('span.text-gray-400');
+                if(span) span.textContent = i;
+                
+                // Update checkbox
+                const chk = div.querySelector('input[type="checkbox"]');
+                chk.name = `is_correct_${i}`;
+            });
+        }
+
+        function clearModalFormCrx() {
+            document.querySelector('#modalQuestionFormCrx [name="question_text"]').value = '';
+            const cont = document.getElementById('modalOptionsContainerCrx');
+            cont.innerHTML = createOptionInputCrx(1) + createOptionInputCrx(2);
+        }
+
+        function editModalQuestionCrx(qId) {
+            const q = questionsCrx.find(qq => qq.id === qId);
+            if (!q) return;
+            currentEditingIdCrx = qId;
+            document.querySelector('#modalQuestionFormCrx [name="question_text"]').value = q.question_text;
+            const cont = document.getElementById('modalOptionsContainerCrx');
+            cont.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                cont.innerHTML += createOptionInputCrx(idx + 1, opt.text, opt.is_correct);
+            });
+            document.getElementById('submitQuestionBtnCrx').textContent = 'Update Question';
+        }
+
+        function deleteModalQuestionCrx(qId) {
+            if (!confirm('Delete this question?')) return;
+            apiCallCrx(`/questions/${qId}/`, 'DELETE').then(() => {
+                loadModalQuestionsCrx();
+            }).catch(err => alert(err.message));
+        }
+
+        function renderModalQuestionsCrx() {
+            const container = document.getElementById('modalQuestionsListCrx');
+            container.innerHTML=`<div class="h-full w-full flex  justify-center items-center">
+                <div class="spinCon">
+                    <svg class="spinVg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/>
+                        <circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/>
+                        <circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/>
+                        <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/>
+                    </svg>
+                </div>
+            </div>`;
+
+            if (questionsCrx.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 italic">No questions added yet.</p>';
+                return;
+            }
+            container.innerHTML = questionsCrx.map((q, idx) => `
+                <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-gray-400 mr-2">Q${idx+1}</span>
+                        <div class="flex space-x-2">
+                             <button onclick="editModalQuestionCrx(${q.id})" class="text-xs text-gray-600 hover:text-black font-medium">Edit</button>
+                             <button onclick="deleteModalQuestionCrx(${q.id})" class="text-xs text-gray-400 hover:text-gray-900">Delete</button>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-900 mb-2">${q.question_text}</h4>
+                    <ul class="space-y-1">
+                        ${q.options.map(opt => `
+                            <li class="text-xs flex items-center ${opt.is_correct ? 'text-gray-900 font-medium' : 'text-gray-500'}">
+                                ${opt.is_correct 
+                                    ? '<svg class="w-3 h-3 mr-1.5 text-black" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' 
+                                    : '<span class="w-3 h-3 mr-1.5 block rounded-full border border-gray-300"></span>'}
+                                ${opt.text}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        async function loadModalQuestionsCrx() {
+            if (!currentExamIdCrx) return;
+            try {
+                const result = await apiCallCrx(`/exams/${currentExamIdCrx}/questions/`);
+                questionsCrx = result.questions;
+                renderModalQuestionsCrx();
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load questions: ' + err.message);
+            }
+        }
+
+        function openQuestionsModalCrx(examId, examName, isNew = false) {
+            currentExamIdCrx = examId;
+            document.getElementById('modalExamNameCrx').textContent = `Manage Questions: ${examName}`;
+            currentEditingIdCrx = null;
+            document.getElementById('submitQuestionBtnCrx').textContent = 'Add Question';
+            document.getElementById('questionsModalCrx').classList.remove('hidden');
+            clearModalFormCrx();
+            loadModalQuestionsCrx();
+        }
+
+        function closeQuestionsModalCrx() {
+            document.getElementById('questionsModalCrx').classList.add('hidden');
+            currentExamIdCrx = null;
+            questionsCrx = [];
+            currentEditingIdCrx = null;
+            fetchExamsCrx();
+        }
+
+        function setupQuestionsModalCrx() {
+            const form = document.getElementById('modalQuestionFormCrx');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const questionText = formData.get('question_text').trim();
+                if (!questionText) {
+                    alert('Question text is required');
+                    return;
+                }
+                const options = [];
+                let i = 1;
+                while (true) {
+                    const text = formData.get(`option_text_${i}`);
+                    if (!text) break;
+                    const isCorrect = formData.get(`is_correct_${i}`) === 'on';
+                    if (text.trim()) {
+                        options.push({ text: text.trim(), is_correct: isCorrect });
+                    }
+                    i++;
+                }
+                if (options.length < 2) {
+                    alert('At least 2 options are required');
+                    return;
+                }
+                const correctCount = options.filter(o => o.is_correct).length;
+                if (correctCount !== 1) {
+                    alert('Exactly one option must be correct');
+                    return;
+                }
+                const body = { question_text: questionText, options };
+                const url = currentEditingIdCrx ? `/questions/${currentEditingIdCrx}/` : `/exams/${currentExamIdCrx}/questions/`;
+                const method = currentEditingIdCrx ? 'PUT' : 'POST';
+                try {
+                    await apiCallCrx(url, method, body);
+                    loadModalQuestionsCrx();
+                    clearModalFormCrx();
+                    document.getElementById('submitQuestionBtnCrx').textContent = 'Add Question';
+                    currentEditingIdCrx = null;
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+
+            document.getElementById('modalAddOptionBtnCrx').addEventListener('click', () => {
+                const cont = document.getElementById('modalOptionsContainerCrx');
+                const divs = cont.querySelectorAll('div.flex.items-center.gap-2');
+                const nextI = divs.length + 1;
+                cont.innerHTML += createOptionInputCrx(nextI);
+            });
+
+            document.getElementById('finishBtnCrx').addEventListener('click', closeQuestionsModalCrx);
+        }
+
+        // Edit Exam Details
+        function openEditExamCrx(id, exam) {
+            currentEditExamIdCrx = id;
+            document.querySelector('#editExamFormModalCrx [name="name"]').value = exam.name;
+            document.querySelector('#editExamFormModalCrx [name="subject"]').value = exam.subject;
+            document.querySelector('#editExamFormModalCrx [name="start_time"]').value = exam.start_time_local;
+            document.querySelector('#editExamFormModalCrx [name="end_time"]').value = exam.end_time_local;
+            document.querySelector('#editExamFormModalCrx [name="duration"]').value = exam.duration;
+      
+            const deptSelect = document.querySelector('#editExamFormModalCrx select[name="department_id"]');
+            
+            if (departmentExCrx.length === 0) {
+                apiCallCrx('/departments/').then(r => {
+                    departmentExCrx = r.departmentEx;
+                    populateSelectOptionsCrx(deptSelect, departmentExCrx);
+                    deptSelect.value = exam.department_id || "";
+                });
+            } else {
+                populateSelectOptionsCrx(deptSelect, departmentExCrx);
+                deptSelect.value = exam.department_id || "";
+            }
+      
+            document.getElementById('editExamModalCrx').classList.remove('hidden');
+        }
+
+        function closeEditExamModalCrx() {
+            document.getElementById('editExamModalCrx').classList.add('hidden');
+            currentEditExamIdCrx = null;
+        }
+
+        function setupEditExamModalCrx() {
+            const form = document.getElementById('editExamFormModalCrx');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const updateData = {
+                    name: formData.get('name') || undefined,
+                    subject: formData.get('subject') || undefined,
+                    start_time: formData.get('start_time') || undefined,
+                    end_time: formData.get('end_time') || undefined,
+                    duration: formData.get('duration') ? parseInt(formData.get('duration')) : undefined,
+                    department_id: formData.get('department_id') ? parseInt(formData.get('department_id')) : undefined
+                };
+                const filtered = Object.fromEntries(Object.entries(updateData).filter(([_, v]) => v !== undefined));
+                if (Object.keys(filtered).length === 0) {
+                    alert('No fields to update');
+                    return;
+                }
+                try {
+                    await apiCallCrx(`/exams/${currentEditExamIdCrx}/`, 'PUT', filtered);
+                    closeEditExamModalCrx();
+                    fetchExamsCrx();
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        }
+
+        function deleteExamCrx(id) {
+            if (!confirm('Delete this exam? This cannot be undone.')) return;
+            apiCallCrx(`/exams/${id}/`, 'DELETE').then(() => {
+                fetchExamsCrx();
+            }).catch(err => alert(err.message));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDepartmentsCrx();
+            fetchExamsCrx();
+            setupCreateFormCrx();
+            setupQuestionsModalCrx();
+            setupEditExamModalCrx();
+        });
+    </script>
+</body>
+</html>

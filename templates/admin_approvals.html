@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Pending Approvals</title>
+    <style>
+        /* Variables */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3f37c9;
+            --dark: #333333;
+            --gray-light: #dddddd;
+            --danger: #f44336;
+            --success: #4caf50;
+            --background: #f5f5f5;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.2s ease;
+        }
+
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--background);
+            margin: 0;
+            padding: 16px;
+            font-size: 16px;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .back-button:active {
+            transform: translateY(0);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .filter-input {
+            padding: 10px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        /* Table */
+        .users-table {
+            width: 100%;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .approve-button {
+            padding: 6px 12px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .block-button {
+            padding: 6px 12px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .action-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Loading Overlay */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .spinner::before,
+        .spinner::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--primary);
+            opacity: 0.6;
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+
+        .spinner::after {
+            animation-delay: -0.9s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        /* Filter Form Spinner */
+        .filter-spinner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(67, 97, 238, 0.3);
+            border-top-color: var(--primary);
+            opacity: 0;
+            visibility: hidden;
+            animation: spin 0.8s linear infinite;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .filter-section.filtering .filter-spinner {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Card layout for table rows */
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tbody tr {
+                margin-bottom: 16px;
+                border: 1px solid var(--gray-light);
+                border-radius: var(--border-radius);
+                padding: 8px;
+                background-color: white;
+            }
+
+            td {
+                position: relative;
+                padding: 12px 16px;
+                padding-left: 45%;
+                border-bottom: 1px solid var(--gray-light);
+                display: flex;
+                align-items: center;
+                min-height: 44px;
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                top: 50%;
+                left: 16px;
+                width: 40%;
+                transform: translateY(-50%);
+                font-weight: 600;
+                color: var(--dark);
+                white-space: nowrap;
+            }
+
+            .users-table {
+                background-color: transparent;
+                box-shadow: none;
+            }
+
+            .action-buttons {
+                justify-content: flex-end;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pending Approvals</h1>
+            <a href="/" class="back-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 12L8 12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M11 8L7 12L11 16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </a>
+        </div>
+        
+        <form id="filterForm" method="get" action="/admin/approvals">
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label for="searchInput">Search by Name or Email:</label>
+                        <input type="text" id="searchInput" name="search" value="{{ search or '' }}" class="filter-input">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="roleSelect">Filter by Role:</label>
+                        <select id="roleSelect" name="role" class="filter-input">
+                            <option value="">All</option>
+                            <option value="teacher" {% if selected_role == "teacher" %}selected{% endif %}>Teacher</option>
+                            <option value="student" {% if selected_role == "student" %}selected{% endif %}>Student</option>
+                        </select>
+                    </div>
+                    
+                    {% if selected_role == "student" %}
+                    <div class="filter-item">
+                        <label for="departmentSelect">Filter by Department:</label>
+                        <select name="department_id" id="departmentSelect" class="filter-input">
+                            <option value="0" {% if selected_department == 0 or not selected_department %}selected{% endif %}>All</option>
+                            {% for department in departments %}
+                            <option value="{{ department.id }}" {% if department.id == selected_department %}selected{% endif %}>
+                                {{ department.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="filter-spinner"></div>
+            </div>
+        </form>
+        
+        <div class="users-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td data-label="Username">{{ user.username }}</td>
+                        <td data-label="Email">{{ user.email }}</td>
+                        <td data-label="Role">{{ user.role }}</td>
+                        <td data-label="Department">{% if user.department_id %}{{ user.department_id }}{% else %}N/A{% endif %}</td>
+                        <td data-label="Actions">
+                            <div class="action-buttons">
+                                <form method="post" action="/admin/approvals/approve/{{ user.id }}" style="display:inline;">
+                                    <button type="submit" class="approve-button">Approve</button>
+                                </form>
+                                <form method="post" action="/admin/block/{{ user.id }}" style="display:inline;">
+                                    <button type="submit" class="block-button">Block</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Filter functionality
+        const filterSection = document.querySelector('.filter-section');
+        const filterForm = document.getElementById('filterForm');
+        const formInputs = document.querySelectorAll('.filter-input');
+        
+        // Add debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(this, args);
+                }, wait);
+            };
+        }
+        
+        // Auto-submit form with debounce for text inputs
+        formInputs.forEach(input => {
+            if (input.type === 'text') {
+                input.addEventListener('input', debounce(() => {
+                    filterSection.classList.add('filtering');
+                    setTimeout(() => filterForm.submit(), 500);
+                }, 500));
+            } else {
+                input.addEventListener('change', () => {
+                    filterSection.classList.add('filtering');
+                    setTimeout(() => filterForm.submit(), 300);
+                });
+            }
+        });
+        
+        // Loading overlay functionality
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+        
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+        
+        // Show loading when forms are submitted
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                // Don't show loading for the filter form as it has its own spinner
+                if (form.id !== 'filterForm') {
+                    showLoading();
+                }
+            });
+        });
+        
+        // Handle department select default value
+        window.addEventListener('load', function() {
+            const departmentSelect = document.getElementById('departmentSelect');
+            if (departmentSelect && (!departmentSelect.value || departmentSelect.value === '')) {
+                departmentSelect.value = '0';
+            }
+            
+            // Remove filtering class
+            filterSection.classList.remove('filtering');
+            
+            // Hide loading
+            hideLoading();
+        });
+        
+        // Handle back/forward navigation
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                hideLoading();
+                filterSection.classList.remove('filtering');
+            }
+        });
+        window.addEventListener('beforeunload', function() {
+            showLoading();
+        });
+    </script>
+</body>
+</html>

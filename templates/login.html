@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - Testify Exam Portal</title>
+    <script src="/static/tailwind.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body, html { -webkit-tap-highlight-color: transparent; 
+            font-family: "Plus Jakarta Sans", "system-ui", "sans-serif";
+            font-feature-settings: "cv11", "ss01";
+            font-weight: 400;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+            -webkit-text-fill-color: black !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+    <style>
+        
+        .spinCon {
+            width: 4rem; 
+            height: 4rem; 
+            position: relative;
+        }
+          
+
+        @keyframes spin-variable {
+            0% {
+                transform: rotate(0deg);
+                animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1); 
+            }
+
+            30% {
+                transform: rotate(360deg);
+                animation-timing-function: cubic-bezier(0, 0, 1, 1); 
+            }
+
+            60% {
+                transform: rotate(540deg); 
+                animation-timing-function: cubic-bezier(0.0, 0.0, 0.6, 1); 
+            }
+            
+ 
+            100% {
+                transform: rotate(1080deg);
+                animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1); 
+            }
+        }
+        
+
+        .spinVg {
+            width: 100%;
+            height: 100%;
+            
+            animation: spin-variable 4s infinite; 
+            transform-origin: center; 
+        }
+
+        @keyframes spin-linear {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        </style>
+</head>
+<body class=" min-h-screen flex items-center justify-center p-4 text-neutral-900 selection:bg-black selection:text-white">
+
+    <div id="overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-opacity duration-500 opacity-100 visible">
+        <div class="spinCon">
+            <svg class="spinVg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/>
+                <circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/>
+                <circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/>
+                <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/>
+            </svg>
+        </div>
+                
+    </div>
+
+    <div class="w-full max-w-5xl border border-gray-200 bg-white rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[700px]">
+        <div class="hidden md:flex md:w-1/2 bg-black text-white p-12 flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-neutral-800 via-black to-black opacity-60"></div>
+            
+            <div class="relative z-10">
+                <div class="w-12 h-12 bg-white text-black rounded-xl flex items-center justify-center font-extrabold text-2xl mb-6">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/><circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/><circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/></svg>
+                </div>
+
+                <h2 class="text-4xl font-bold tracking-tight mb-4">Testify</h2>
+                <p class="text-neutral-400 text-lg leading-relaxed max-w-sm">
+                    Your ultimate platform for academic excellence and knowledge assessment. Experience seamless testing today.
+                </p>
+            </div>
+
+            <div class="relative z-10 text-sm text-neutral-500">
+                &copy; 2025 Testify Portal
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
+
+            <div class="md:hidden mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center font-bold text-xl"><svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.893 7.936a8.003 8.003 0 0 1-7.774 12.016m-6.012-3.888a8.003 8.003 0 0 1 7.774-12.016"/><circle cx="17.657" cy="6.343" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 17.657 6.343)"/><circle cx="6.343" cy="17.657" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 6.343 17.657)"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(45 12 12)"/></svg></div>
+                <span class="font-bold text-xl tracking-tight">Testify</span>
+            </div>
+
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-black mb-2">Welcome Back</h1>
+                <p class="text-neutral-500">Sign in to continue to your exams</p>
+            </div>
+
+            {% if error %}
+            <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-start gap-3 text-sm">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            {% if message %}
+            <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-100 text-green-700 flex items-start gap-3 text-sm">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endif %}
+            
+
+            <form action="/login" method="post" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-neutral-700">Email Address</label>
+                    <div class="relative group">
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required autocomplete="email"
+                            class="w-full px-4 py-3 pl-4 pr-12 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-black transition-colors">
+                            <svg width="20px" height="20px" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M1.60175 4.20114C2.14997 3.47258 3.02158 3 4 3H20C20.9784 3 21.85 3.47258 22.3982 4.20113L12 11.7635L1.60175 4.20114Z"/>
+                                <path d="M1 6.2365V18C1 19.6523 2.34772 21 4 21H20C21.6523 21 23 19.6523 23 18V6.23649L13.1763 13.381C12.475 13.891 11.525 13.891 10.8237 13.381L1 6.2365Z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Password Input -->
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-neutral-700">Password</label>
+                    <div class="relative group">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password"
+                            class="w-full px-4 py-3 pl-4 pr-12 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-black transition-colors">
+                            <svg width="20px" height="20px" viewBox="0 0 64 64" fill="currentColor">
+                                <path d="M52,24h-4v-8c0-8.836-7.164-16-16-16S16,7.164,16,16v8h-4c-2.211,0-4,1.789-4,4v32c0,2.211,1.789,4,4,4h40 c2.211,0,4-1.789,4-4V28C56,25.789,54.211,24,52,24z M32,48c-2.211,0-4-1.789-4-4s1.789-4,4-4s4,1.789,4,4S34.211,48,32,48z M40,24 H24v-8c0-4.418,3.582-8,8-8s8,3.582,8,8V24z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Options -->
+                <div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="remember" name="remember" checked
+                            class="w-4 h-4 rounded border-neutral-300 text-black focus:ring-black">
+                        <label for="remember" class="text-neutral-600 select-none">Remember me</label>
+                    </div>
+                    <a href="/forgot-password" class="font-medium text-neutral-900 hover:underline">Forgot Password?</a>
+                </div>
+
+                <button id="loginButton" type="submit" 
+                    class="w-full bg-black text-white p-3 rounded-full font-semibold text-sm uppercase tracking-wider hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed group">
+                    <span>Sign In</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24">
+                        <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12.2929 4.29289C12.6834 3.90237 13.3166 3.90237 13.7071 4.29289L20.7071 11.2929C21.0976 11.6834 21.0976 12.3166 20.7071 12.7071L13.7071 19.7071C13.3166 20.0976 12.6834 20.0976 12.2929 19.7071C11.9024 19.3166 11.9024 18.6834 12.2929 18.2929L17.5858 13H4C3.44772 13 3 12.5523 3 12C3 11.4477 3.44772 11 4 11H17.5858L12.2929 5.70711C11.9024 5.31658 11.9024 4.68342 12.2929 4.29289Z"/>
+                    </svg>
+                </button>
+            </form>
+            
+            <!-- Divider -->
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-neutral-200"></div>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase tracking-wider">
+                    <span class="bg-white px-4 text-neutral-400">Or continue with</span>
+                </div>
+            </div>
+
+            <!-- <div class="flex justify-center gap-4">
+                <button type="button" class="p-3 border border-neutral-200 rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-colors text-neutral-600 hover:text-black">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.76 10.77L19.67 10.42H12.23V13.58H16.68C16.4317 14.5443 15.8672 15.3974 15.0767 16.0029C14.2863 16.6084 13.3156 16.9313 12.32 16.92C11.0208 16.9093 9.77254 16.4135 8.81999 15.53C8.35174 15.0685 7.97912 14.5191 7.72344 13.9134C7.46777 13.3077 7.33407 12.6575 7.33 12C7.34511 10.6795 7.86792 9.41544 8.79 8.47002C9.7291 7.58038 10.9764 7.08932 12.27 7.10002C13.3779 7.10855 14.4446 7.52101 15.27 8.26002L17.47 6.00002C16.02 4.70638 14.1432 3.9941 12.2 4.00002C11.131 3.99367 10.0713 4.19793 9.08127 4.60115C8.09125 5.00436 7.19034 5.59863 6.43 6.35002C4.98369 7.8523 4.16827 9.85182 4.15152 11.9371C4.13478 14.0224 4.918 16.0347 6.34 17.56C7.12784 18.3449 8.06422 18.965 9.09441 19.3839C10.1246 19.8029 11.2279 20.0123 12.34 20C13.3484 20.0075 14.3479 19.8102 15.2779 19.42C16.2078 19.0298 17.0488 18.4549 17.75 17.73C19.1259 16.2171 19.8702 14.2347 19.83 12.19C19.8408 11.7156 19.8174 11.2411 19.76 10.77Z"/>
+                    </svg>
+                </button>
+                <button type="button" class="p-3 border border-neutral-200 rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-colors text-neutral-600 hover:text-black">
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M21.95 5.005l-3.306-.004c-3.206 0-5.277 2.124-5.277 5.415v2.495H10.05v4.515h3.317l-.004 9.575h4.641l.004-9.575h3.806l-.003-4.514h-3.803v-2.117c0-1.018.241-1.533 1.566-1.533l2.366-.001.01-4.256z"/></svg>
+                </button>
+                <button type="button" class="p-3 border border-neutral-200 rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-colors text-neutral-600 hover:text-black">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.52 12.46C16.508 11.8438 16.6682 11.2365 16.9827 10.7065C17.2972 10.1765 17.7534 9.74476 18.3 9.46C17.9558 8.98143 17.5063 8.5883 16.9862 8.31089C16.466 8.03349 15.8892 7.87923 15.3 7.86C14.03 7.76 12.65 8.6 12.14 8.6C11.63 8.6 10.37 7.9 9.40999 7.9C7.40999 7.9 5.29999 9.49 5.29999 12.66C5.30963 13.6481 5.48194 14.6279 5.80999 15.56C6.24999 16.84 7.89999 20.05 9.61999 20C10.52 20 11.16 19.36 12.33 19.36C13.5 19.36 14.05 20 15.06 20C16.79 20 18.29 17.05 18.72 15.74C18.0689 15.4737 17.5119 15.0195 17.1201 14.4353C16.7282 13.8511 16.5193 13.1634 16.52 12.46ZM14.52 6.59C14.8307 6.23965 15.065 5.82839 15.2079 5.38245C15.3508 4.93651 15.3992 4.46569 15.35 4C14.4163 4.10239 13.5539 4.54785 12.93 5.25C12.6074 5.58991 12.3583 5.99266 12.1983 6.43312C12.0383 6.87358 11.9708 7.34229 12 7.81C12.4842 7.82361 12.9646 7.71974 13.3999 7.50728C13.8353 7.29482 14.2127 6.98009 14.5 6.59H14.52Z"/>
+                    </svg>
+                </button>
+            </div>
+             -->
+            <p class="mt-8 text-center text-sm text-neutral-500">
+                Don't have an account? <a href="/register" class="font-semibold text-black hover:underline">Register Now</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById("overlay");
+        const form = document.querySelector("form");
+        const loginButton = document.getElementById("loginButton");
+
+        function showLoading() {
+            if(overlay) {
+                overlay.classList.remove('invisible', 'opacity-0');
+                overlay.classList.add('visible', 'opacity-100');
+            }
+        }
+
+        function hideLoading() {
+            if(overlay) {
+                overlay.classList.remove('visible', 'opacity-100');
+                overlay.classList.add('invisible', 'opacity-0');
+            }
+        }
+
+        // Listen for the form submission event
+        if (form) {
+            form.addEventListener("submit", function() {
+                showLoading();
+                if (loginButton) {
+                    loginButton.disabled = true;
+                    loginButton.classList.add('opacity-75', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        showLoading();
+
+        window.addEventListener("load", function() {
+            setTimeout(hideLoading, 300);
+        });
+    </script>
+</body>
+</html>
