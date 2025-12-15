@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
-  <title>AI Social Studio</title>
+  <title>Testify</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Testify</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <script src="/static/tailwind.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -342,7 +341,7 @@
 <style>
   @media (hover: hover) and (pointer: fine) {
     .card-hover:hover {
-      transform: translateY(-8px);
+      transform: translateY(-4px);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
   }
@@ -936,7 +935,7 @@
                         </div>
                       </div>
                       <div id="feedbackListPrf" class="space-y-4 hidden"></div>
-                      <div id="feedbackEmptyPrf" class="hidden bg-white rounded-2xl p-10 shadow-soft text-center">
+                      <div id="feedbackEmptyPrf" class="hidden p-6 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
                             <i class="far fa-comment-dots text-2xl text-gray-400"></i>
                         </div>
@@ -962,14 +961,14 @@
 
 
 <div id="feedbackModalPrf" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" id="modalBackdropPrf"></div>
+  <div class="fixed inset-0 bg-gray-900/60  transition-opacity" id="modalBackdropPrf"></div>
 
   <div class="fixed inset-0 z-10 overflow-y-auto">
     <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
       
-      <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-md">
+      <div class="relative mb-15 transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-md">
         
-        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div class="bg-white px-4 pt-5 sm:p-6 sm:pb-4">
           <div class="sm:flex sm:items-start">
             <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
               <h3 class="text-xl font-semibold leading-6 text-gray-900 mb-1" id="modal-title">Rate Experience</h3>
@@ -991,7 +990,7 @@
 
                 <div class="mb-4">
                   <label for="messagePrf" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                  <textarea id="messagePrf" rows="4" class="w-full rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:border-primaryPrf focus:ring-primaryPrf text-sm p-3 transition-all outline-none" placeholder="Type your feedback here..." required></textarea>
+                  <textarea id="messagePrf" rows="4" class="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-primaryPrf focus:ring-primaryPrf text-sm p-3 transition-all outline-none" placeholder="Type your feedback here..." required></textarea>
                 </div>
                 
                 <div id="formStatusPrf" class="text-center text-sm font-medium h-5 mb-2"></div>
@@ -1117,15 +1116,15 @@
     let activeIndex = 0;
 
 
-    function ZTab(){  //load exam
+    function ZTab(){  
         loadExamsExr();
     }
-    function FTab(){  //creating
+    function FTab(){  
       populateDepartmentsCrx();
       fetchExamsCrx();
       setupCreateFormCrx();
       setupQuestionsModalCrx();
-      setupEditExamModalCrx();   
+      setupEditExamModalCrx(); 
     }
     function STab(){  //leaderboard
 
@@ -1236,6 +1235,73 @@
         const active = document.querySelector('.pill-nav-item.active');
         if (active) updatePill(active);
     });
+
+    // Swipe support for mobile (no looping)
+let touchStartX = 0;
+let touchEndX = 0;
+const swipeThreshold = 50; // Minimum pixels to consider a swipe
+const mobileBreakpoint = 768; // Adjust to your responsive breakpoint (e.g., 768px for tablets and below)
+
+function handleSwipe() {
+    // Optional: Disable swipe on desktop/large screens
+    if (window.innerWidth >= mobileBreakpoint) return;
+
+    const diffX = touchStartX - touchEndX;
+
+    // Ignore small movements
+    if (Math.abs(diffX) < swipeThreshold) return;
+
+    let newIndex = activeIndex;
+
+    if (diffX > 0) {
+        // Swipe left → go to next tab (higher index)
+        if (activeIndex < navItems.length - 1) {
+            newIndex = activeIndex + 1;
+        }
+    } else {
+        // Swipe right → go to previous tab (lower index)
+        if (activeIndex > 0) {
+            newIndex = activeIndex - 1;
+        }
+    }
+
+    // If no valid tab change, do nothing
+    if (newIndex === activeIndex) return;
+
+    // Update UI and state exactly like clicking a pill
+    const targetItem = navItems[newIndex];
+
+    navItems.forEach(nav => nav.classList.remove('active'));
+    targetItem.classList.add('active');
+    updatePill(targetItem);
+    slideContent(newIndex);
+
+    // Run tab-specific init function
+    if (tabInitFunctions[newIndex]) {
+        tabInitFunctions[newIndex]();
+    }
+
+    // Start/restart auto-refresh for the new tab
+    startTabRefresh(newIndex);
+
+    // Update global active index
+    activeIndex = newIndex;
+}
+
+// Attach touch events — preferably to .content-track or .viewport
+const swipeContainer = document.querySelector('.content-track') || document.querySelector('.viewport');
+
+if (swipeContainer) {
+    swipeContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    swipeContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+}
+
 </script>
 
 
@@ -1359,10 +1425,11 @@
     // === Render Cards ===
     containerExr.innerHTML = examsExr.map(exam => {
       const isLive = currentTabExr === 'today';
+      const isEnded = currentTabExr === 'ended';
       const attempted = !!exam.attempt;
       const score = attempted && exam.attempt.score !== null ? exam.attempt.score : null;
       const scoreHidden = attempted && !exam.attempt.is_score_public;
-  
+    
       return `
         <div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden card-hover transition-all duration-300">
           <div class="${isLive ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'} px-6 py-3">
@@ -1391,7 +1458,21 @@
               </div>
             </div>
             <div class="pt-6 border-t border-gray-200 flex items-center justify-between">
-              ${isLive ? `
+              ${attempted ? `
+                <div>
+                  <p class="text-xs text-gray-500 font-medium">Your Score</p>
+                  ${scoreHidden
+                    ? '<p class="text-amber-600 font-semibold text-xl mt-2">Hidden by instructor</p>'
+                    : `<p class="text-4xl font-semibold text-gray-800 mt-2">${score} / ${exam.question_count}</p>`
+                  }
+                </div>
+                ${isEnded ? `
+                  <a href="/student/exam/${exam.id}/result"
+                     class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-10 rounded-2xl shadow-lg transform hover:scale-105 transition">
+                    View Result
+                  </a>
+                ` : '<div></div>'}
+              ` : isLive ? `
                 <div class="flex items-center gap-3">
                   <div class="pulse-dot"></div>
                   <span class="font-semibold text-green-600">Live Now</span>
@@ -1401,22 +1482,11 @@
                   class="start-exam-btn bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition">
                   Start Exam
                 </button>
-              ` : currentTabExr === 'ended' ? `
+              ` : isEnded ? `
                 <div>
-                  ${attempted ? `
-                    <p class="text-xs text-gray-500 font-medium">Your Score</p>
-                    ${scoreHidden
-                      ? '<p class="text-amber-600 font-semibold text-xl mt-2">Hidden by instructor</p>'
-                      : `<p class="text-4xl font-semibold text-gray-800 mt-2">${score} / ${exam.question_count}</p>`
-                    }
-                  ` : '<span class="text-gray-500 font-medium">Not attempted</span>'}
+                  <span class="text-gray-500 font-medium">Not attempted</span>
                 </div>
-                ${attempted ? `
-                  <a href="/student/exam/${exam.id}/result"
-                     class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-10 rounded-2xl shadow-lg transform hover:scale-105 transition">
-                    View Result
-                  </a>
-                ` : '<div></div>'}
+                <div></div>
               ` : `
                 <span class="px-5 py-3 bg-blue-100 text-blue-800 font-semibold text-xs rounded-full">Scheduled</span>
                 <div></div>
@@ -1426,7 +1496,7 @@
         </div>
       `;
     }).join('');
-
+    
     document.querySelectorAll('.start-exam-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const url = btn.getAttribute('data-exam-url');
@@ -1504,6 +1574,7 @@
 
   function toggleModalPrf(show) {
     if (show) {
+      document.querySelector('.nav-header').classList.remove('show');
       modalPrf.classList.remove('hidden');
       document.getElementById('feedbackFormPrf').reset();
       document.getElementById('formStatusPrf').textContent = '';
@@ -1512,6 +1583,7 @@
       updateStars(0);
     } else {
       modalPrf.classList.add('hidden');
+      document.querySelector('.nav-header').classList.add('show');
     }
   }
 
@@ -1586,6 +1658,7 @@
       }
 
       listEl.classList.remove('hidden');
+      emptyEl.classList.add('hidden'); 
       listEl.innerHTML = ''; 
 
       feedback.forEach(fb => {
@@ -1650,7 +1723,7 @@
 
       if (res.ok) {
           status.textContent = "Feedback Sent Successfully!";
-          status.className = "text-center text-sm font-medium text-green-600 mb-2";
+          status.className = "text-center text-sm text-gray-600 mb-2";
           setTimeout(() => {
               toggleModalPrf(false);
               refreshHistoryPrf();
@@ -2021,38 +2094,53 @@
       `).join('');
   }
 
-  function setupCreateFormCrx() {
-      const form = document.getElementById('createExamFormCrx');
-      form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target);
-          const examData = {
-              name: formData.get('name'),
-              subject: formData.get('subject'),
-              start_time: formData.get('start_time'),
-              end_time: formData.get('end_time'),
-              duration: parseInt(formData.get('duration')),
-              department_id: parseInt(formData.get('department_id'))
-          };
-          
-          const msgEl = document.getElementById('createMessageCrx');
-          const errEl = document.getElementById('createErrorCrx');
-          msgEl.classList.add('hidden');
-          errEl.classList.add('hidden');
+  let isCreateSetupDoneCrx = false;
 
-          try {
-              const result = await apiCallCrx('/exams/', 'POST', examData);
-              msgEl.textContent = `Success: Exam created (ID: ${result.exam_id})`;
-              msgEl.classList.remove('hidden');
-              e.target.reset();
-              openQuestionsModalCrx(result.exam_id, examData.name, true);
-              fetchExamsCrx();
-          } catch (err) {
-              errEl.textContent = `Error: ${err.message}`;
-              errEl.classList.remove('hidden');
-          }
-      });
-  }
+function setupCreateFormCrx() {
+    if (isCreateSetupDoneCrx) return;
+    isCreateSetupDoneCrx = true;
+    
+    const form = document.getElementById('createExamFormCrx');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        if (submitBtn && submitBtn.disabled) return;
+        if (submitBtn) submitBtn.disabled = true;
+        
+        try {
+            const formData = new FormData(e.target);
+            const examData = {
+                name: formData.get('name'),
+                subject: formData.get('subject'),
+                start_time: formData.get('start_time'),
+                end_time: formData.get('end_time'),
+                duration: parseInt(formData.get('duration')),
+                department_id: parseInt(formData.get('department_id'))
+            };
+            
+            const msgEl = document.getElementById('createMessageCrx');
+            const errEl = document.getElementById('createErrorCrx');
+            msgEl.classList.add('hidden');
+            errEl.classList.add('hidden');
+
+            const result = await apiCallCrx('/exams/', 'POST', examData);
+            msgEl.textContent = `Success: Exam created (ID: ${result.exam_id})`;
+            msgEl.classList.remove('hidden');
+            e.target.reset();
+            openQuestionsModalCrx(result.exam_id, examData.name, true);
+            fetchExamsCrx();
+        } catch (err) {
+            const errEl = document.getElementById('createErrorCrx');
+            errEl.textContent = `Error: ${err.message}`;
+            errEl.classList.remove('hidden');
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    });
+}
+
+
   function createOptionInputCrx(i, text = '', checked = false) {
       return `
           <div class="flex items-center gap-2 mb-2 group">
@@ -2100,10 +2188,23 @@
   }
 
   function clearModalFormCrx() {
-      document.querySelector('#modalQuestionFormCrx [name="question_text"]').value = '';
-      const cont = document.getElementById('modalOptionsContainerCrx');
-      cont.innerHTML = createOptionInputCrx(1) + createOptionInputCrx(2);
-  }
+    const questionInput = document.querySelector('#modalQuestionFormCrx [name="question_text"]');
+    if (questionInput) questionInput.value = '';
+    
+    const cont = document.getElementById('modalOptionsContainerCrx');
+    if (cont) {
+        cont.innerHTML = ''; // Clear first
+        cont.insertAdjacentHTML('beforeend', createOptionInputCrx(1));
+        cont.insertAdjacentHTML('beforeend', createOptionInputCrx(2));
+    }
+    
+    currentEditingIdCrx = null;
+    const submitBtn = document.getElementById('submitQuestionBtnCrx');
+    if (submitBtn) {
+        submitBtn.textContent = 'Add Question';
+        submitBtn.disabled = false;
+    }
+}
 
   function editModalQuestionCrx(qId) {
       const q = questionsCrx.find(qq => qq.id === qId);
@@ -2179,14 +2280,12 @@
   }
 
   function openQuestionsModalCrx(examId, examName, isNew = false) {
-      currentExamIdCrx = examId;
-      document.getElementById('modalExamNameCrx').textContent = `Manage Questions: ${examName}`;
-      currentEditingIdCrx = null;
-      document.getElementById('submitQuestionBtnCrx').textContent = 'Add Question';
-      document.getElementById('questionsModalCrx').classList.remove('hidden');
-      clearModalFormCrx();
-      loadModalQuestionsCrx();
-  }
+    currentExamIdCrx = examId;
+    document.getElementById('modalExamNameCrx').textContent = `Manage Questions: ${examName}`;
+    clearModalFormCrx(); // Clear before showing
+    document.getElementById('questionsModalCrx').classList.remove('hidden');
+    loadModalQuestionsCrx();
+}
 
   function closeQuestionsModalCrx() {
       document.getElementById('questionsModalCrx').classList.add('hidden');
@@ -2196,61 +2295,94 @@
       fetchExamsCrx();
   }
 
-  function setupQuestionsModalCrx() {
-      const form = document.getElementById('modalQuestionFormCrx');
-      form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target);
-          const questionText = formData.get('question_text').trim();
-          if (!questionText) {
-              alert('Question text is required');
-              return;
-          }
-          const options = [];
-          let i = 1;
-          while (true) {
-              const text = formData.get(`option_text_${i}`);
-              if (!text) break;
-              const isCorrect = formData.get(`is_correct_${i}`) === 'on';
-              if (text.trim()) {
-                  options.push({ text: text.trim(), is_correct: isCorrect });
-              }
-              i++;
-          }
-          if (options.length < 2) {
-              alert('At least 2 options are required');
-              return;
-          }
-          const correctCount = options.filter(o => o.is_correct).length;
-          if (correctCount !== 1) {
-              alert('Exactly one option must be correct');
-              return;
-          }
-          const body = { question_text: questionText, options };
-          const url = currentEditingIdCrx ? `/questions/${currentEditingIdCrx}/` : `/exams/${currentExamIdCrx}/questions/`;
-          const method = currentEditingIdCrx ? 'PUT' : 'POST';
-          try {
-              await apiCallCrx(url, method, body);
-              loadModalQuestionsCrx();
-              clearModalFormCrx();
-              document.getElementById('submitQuestionBtnCrx').textContent = 'Add Question';
-              currentEditingIdCrx = null;
-          } catch (err) {
-              alert(err.message);
-          }
-      });
+  let isSetupDoneCrx = false;
 
-      document.getElementById('modalAddOptionBtnCrx').addEventListener('click', () => {
-          const cont = document.getElementById('modalOptionsContainerCrx');
-          const divs = cont.querySelectorAll('div.flex.items-center.gap-2');
-          const nextI = divs.length + 1;
-          cont.innerHTML += createOptionInputCrx(nextI);
-      });
+function setupQuestionsModalCrx() {
+    // Only setup once
+    if (isSetupDoneCrx) return;
+    isSetupDoneCrx = true;
+    
+    const form = document.getElementById('modalQuestionFormCrx');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Prevent double submission
+        const submitBtn = document.getElementById('submitQuestionBtnCrx');
+        if (submitBtn.disabled) return;
+        submitBtn.disabled = true;
+        
+        try {
+            const formData = new FormData(e.target);
+            const questionText = formData.get('question_text').trim();
+            if (!questionText) {
+                alert('Question text is required');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Collect options directly from DOM to avoid FormData issues
+            const cont = document.getElementById('modalOptionsContainerCrx');
+            const optionDivs = cont.querySelectorAll('div.flex.items-center.gap-2');
+            const options = [];
+            
+            optionDivs.forEach((div) => {
+                const textInput = div.querySelector('input[type="text"]');
+                const checkInput = div.querySelector('input[type="checkbox"]');
+                const text = textInput ? textInput.value.trim() : '';
+                const isCorrect = checkInput ? checkInput.checked : false;
+                
+                if (text) {
+                    options.push({ text, is_correct: isCorrect });
+                }
+            });
+            
+            if (options.length < 2) {
+                alert('At least 2 options are required');
+                submitBtn.disabled = false;
+                return;
+            }
+            const correctCount = options.filter(o => o.is_correct).length;
+            if (correctCount !== 1) {
+                alert('Exactly one option must be correct');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            const body = { question_text: questionText, options };
+            const url = currentEditingIdCrx ? `/questions/${currentEditingIdCrx}/` : `/exams/${currentExamIdCrx}/questions/`;
+            const method = currentEditingIdCrx ? 'PUT' : 'POST';
+            
+            await apiCallCrx(url, method, body);
+            loadModalQuestionsCrx();
+            clearModalFormCrx();
+            document.getElementById('submitQuestionBtnCrx').textContent = 'Add Question';
+            currentEditingIdCrx = null;
+            
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
 
-      document.getElementById('finishBtnCrx').addEventListener('click', closeQuestionsModalCrx);
-  }
+    document.getElementById('modalAddOptionBtnCrx').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const cont = document.getElementById('modalOptionsContainerCrx');
+        const divs = cont.querySelectorAll('div.flex.items-center.gap-2');
+        const nextI = divs.length + 1;
+        const newOptionHTML = createOptionInputCrx(nextI);
+        cont.insertAdjacentHTML('beforeend', newOptionHTML);
+    });
 
-  // Edit Exam Details
+    document.getElementById('finishBtnCrx').addEventListener('click', (e) => {
+        e.preventDefault();
+        closeQuestionsModalCrx();
+    });
+}
+
+// Edit Exam Details
   function openEditExamCrx(id, exam) {
       currentEditExamIdCrx = id;
       document.querySelector('#editExamFormModalCrx [name="name"]').value = exam.name;
@@ -2280,34 +2412,45 @@
       currentEditExamIdCrx = null;
   }
 
-  function setupEditExamModalCrx() {
-      const form = document.getElementById('editExamFormModalCrx');
-      form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target);
-          const updateData = {
-              name: formData.get('name') || undefined,
-              subject: formData.get('subject') || undefined,
-              start_time: formData.get('start_time') || undefined,
-              end_time: formData.get('end_time') || undefined,
-              duration: formData.get('duration') ? parseInt(formData.get('duration')) : undefined,
-              department_id: formData.get('department_id') ? parseInt(formData.get('department_id')) : undefined
-          };
-          const filtered = Object.fromEntries(Object.entries(updateData).filter(([_, v]) => v !== undefined));
-          if (Object.keys(filtered).length === 0) {
-              alert('No fields to update');
-              return;
-          }
-          try {
-              await apiCallCrx(`/exams/${currentEditExamIdCrx}/`, 'PUT', filtered);
-              closeEditExamModalCrx();
-              fetchExamsCrx();
-          } catch (err) {
-              alert(err.message);
-          }
-      });
-  }
+  let isEditSetupDoneCrx = false;
 
+function setupEditExamModalCrx() {
+    if (isEditSetupDoneCrx) return;
+    isEditSetupDoneCrx = true;
+    
+    const form = document.getElementById('editExamFormModalCrx');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        if (submitBtn && submitBtn.disabled) return;
+        if (submitBtn) submitBtn.disabled = true;
+        
+        try {
+            const formData = new FormData(e.target);
+            const updateData = {
+                name: formData.get('name') || undefined,
+                subject: formData.get('subject') || undefined,
+                start_time: formData.get('start_time') || undefined,
+                end_time: formData.get('end_time') || undefined,
+                duration: formData.get('duration') ? parseInt(formData.get('duration')) : undefined,
+                department_id: formData.get('department_id') ? parseInt(formData.get('department_id')) : undefined
+            };
+            const filtered = Object.fromEntries(Object.entries(updateData).filter(([_, v]) => v !== undefined));
+            if (Object.keys(filtered).length === 0) {
+                alert('No fields to update');
+                return;
+            }
+            await apiCallCrx(`/exams/${currentEditExamIdCrx}/`, 'PUT', filtered);
+            closeEditExamModalCrx();
+            fetchExamsCrx();
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    });
+}
   function deleteExamCrx(id) {
       if (!confirm('Delete this exam? This cannot be undone.')) return;
       apiCallCrx(`/exams/${id}/`, 'DELETE').then(() => {

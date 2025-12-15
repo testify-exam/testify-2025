@@ -4,19 +4,14 @@ from fastapi.responses import HTMLResponse,JSONResponse
 from fastapi.templating import Jinja2Templates
 from more_itertools import raise_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete, select, and_, func, not_
+from sqlalchemy import delete, select, and_, func,update,insert
 from typing import List, Optional, Dict, Any
 from fastapi import BackgroundTasks, Form, Request, HTTPException, Depends
 from typing import List, Dict, Any
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, and_
-from fastapi import Request, HTTPException, Depends
-from fastapi.responses import HTMLResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload, joinedload
-from fastapi.staticfiles import StaticFiles
 from Database import *
+from datetime import datetime as dt, timezone
+from pydantic import BaseModel, Field, field_validator
 
 
 templates = Jinja2Templates(directory="templates")
@@ -114,16 +109,6 @@ async def get_current_student_id(request: Request, db: AsyncSession) -> int:
 
     return user_id
 
-from datetime import datetime as dt, timezone
-from datetime import datetime
-from zoneinfo import ZoneInfo
-from typing import List, Optional
-from pydantic import BaseModel, Field, field_validator, validator
-from sqlalchemy import select, and_, insert
-from sqlalchemy.orm import selectinload
-from fastapi import Request, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
-import os
 
 class OptionSchema(BaseModel):
     text: str
@@ -553,7 +538,6 @@ def init(app):
             await db.commit()
             await db.refresh(attempt)
 
-        # Prepare structured question data
         question_data = []
         for question in exam.questions:
             question_data.append({
@@ -565,7 +549,7 @@ def init(app):
                 {
                     "id": opt.id,
                     "option_text": opt.option_text,
-                    "is_correct": opt.is_correct  # Note: be careful exposing this on frontend?
+                    "is_correct": opt.is_correct  
                 }
                 for opt in question.options
             ]
@@ -1029,15 +1013,42 @@ def init(app):
     ):
         user_id, _ = await get_current_user(request, db)
 
-        exam = await db.get(Exam, exam_id, options=[joinedload(Exam.questions), joinedload(Exam.attempts)])
-        if not exam or exam.teacher_id != user_id:
-            raise HTTPException(status_code=404, detail="Exam not found or access denied.")
+        # Load exam with teacher info for ownership check
+        exam = await db.get(Exam, exam_id, options=[joinedload(Exam.teacher)])
+        if not exam:
+            raise HTTPException(status_code=404, detail="Exam not found.")
+        
+        if exam.teacher_id != user_id:
+            raise HTTPException(status_code=403, detail="Access denied: You can only delete your own exams.")
 
-        await db.delete(exam)
-        await db.commit()
+        try:
+            await db.execute(
+                delete(ExamResponse).where(ExamResponse.exam_attempt_id.in_(
+                    select(ExamAttempt.id).where(ExamAttempt.exam_id == exam_id)
+                ))
+            )
 
-        return {"message": "Exam deleted successfully"}
-    
+            await db.execute(
+                delete(ExamResponse).where(ExamResponse.question_id.in_(
+                    select(Question.id).where(Question.exam_id == exam_id)
+                ))
+            )
+            await db.execute(
+                delete(Option).where(Option.question_id.in_(
+                    select(Question.id).where(Question.exam_id == exam_id)
+                ))
+            )
+            await db.execute(delete(ExamAttempt).where(ExamAttempt.exam_id == exam_id))
+            await db.execute(delete(Question).where(Question.exam_id == exam_id))
+            await db.delete(exam)
+            await db.commit()
+
+        except Exception as e:
+            await db.rollback()
+            raise HTTPException(status_code=500, detail="Failed to delete exam and all related data.")
+
+        return JSONResponse(content={"message": "Exam and all related data deleted successfully"})
+        
     @app.delete("/api/questions/{question_id}/", response_class=JSONResponse)
     async def delete_question(
         request: Request,
@@ -1045,22 +1056,27 @@ def init(app):
         db: AsyncSession = Depends(get_db)
     ):
         user_id, _ = await get_current_user(request, db)
-        
         stmt = select(Question).options(selectinload(Question.exam)).where(Question.id == question_id)
         result = await db.execute(stmt)
         question = result.scalars().first()
-        if not question or question.exam.teacher_id != user_id:
-            raise HTTPException(status_code=404, detail="Question not found or access denied.")
         
-        await db.delete(question)
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found.")
+        
+        if question.exam.teacher_id != user_id:
+            raise HTTPException(status_code=403, detail="Access denied: You can only delete your own questions.")
+        
         try:
+            await db.execute(delete(Option).where(Option.question_id == question_id))
+            await db.delete(question)
+            
             await db.commit()
-        except Exception:
+        except Exception as e:
             await db.rollback()
-            raise HTTPException(status_code=500, detail="Failed to delete question.")
+            raise HTTPException(status_code=500, detail="Failed to delete question and its options.")
         
-        return JSONResponse(content={"message": "Question deleted successfully"})
-    
+        return JSONResponse(content={"message": "Question and its options deleted successfully"})
+        
     @app.get("/api/departments/", response_class=JSONResponse)
     async def get_departments(db: AsyncSession = Depends(get_db)):
         depts = await _get_departments_list(db)

@@ -6,21 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectionEnd = 0;
     let longPressTimer;
     let isTouchDevice = 'ontouchstart' in window;
-    
-    // Function to show toolbar at the right position
+  
     function showToolbar(x, y) {
-    // Get selection coordinates relative to the textarea
     const selectionRange = questionText.getBoundingClientRect();
-    
-    // Calculate centered position
-    const toolbarX = selectionRange.left + (selectionRange.width / 2) - (editorToolbar.offsetWidth / 2);
-    const toolbarY = y - editorToolbar.offsetHeight - 10; // Position above selection
 
-    // Ensure toolbar doesn't go off-screen
+    const toolbarX = selectionRange.left + (selectionRange.width / 2) - (editorToolbar.offsetWidth / 2);
+    const toolbarY = y - editorToolbar.offsetHeight - 10; 
+
     const maxX = window.innerWidth - editorToolbar.offsetWidth - 10;
     
 
-    // Apply positioning
     editorToolbar.style.left = `${0}px`;
     editorToolbar.style.top = `${toolbarY-170}px`;
     editorToolbar.classList.add('active');
@@ -86,12 +81,9 @@ if (selectedText) {
                 // Try to get selected text (this is tricky on mobile)
                 selectedText = window.getSelection().toString();
                 if (selectedText) {
-                    // Approximation as we can't directly get textarea selection on touch
-                    // Getting the touch position
+
                     const touch = e.touches[0];
                     showToolbar(touch.clientX, touch.clientY);
-                    
-                    // Save current text for later replacement
                     const fullText = this.value;
                     selectionStart = fullText.indexOf(selectedText);
                     selectionEnd = selectionStart + selectedText.length;
