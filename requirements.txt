@@ -14,3 +14,4 @@ uvloop
 httpx
 certifi
 urllib3
+sqlalchemy
