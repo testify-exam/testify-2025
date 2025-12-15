@@ -16,3 +16,4 @@ certifi
 urllib3
 sqlalchemy
 aiosqlite
+more-itertools
