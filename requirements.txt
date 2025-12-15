@@ -15,3 +15,4 @@ httpx
 certifi
 urllib3
 sqlalchemy
+aiosqlite
